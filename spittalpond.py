@@ -11,24 +11,24 @@ class SpittalPond:
     to the Oasis mid-tier Django API.
     """
 
+    types = {
+        "correlations_main":None,
+        "dict_areaperil":"AreaPerilDict",
+        "dict_damagebin":"DamageBinDict",
+        "dict_event":"EventDict",
+        "dict_exposure":"ExposureDict",
+        "dict_hazardintensitybin":"HazardIntensityBinDict",
+        "dict_vuln":"VulnDict",
+        "exposures_instance":"ExposureInstance",
+        "exposures_main":"ExposureVersion",
+        "version_hazfp":"HazFPVersion",
+        "version_vuln":"VulnVersion",
+        "vuln_instance":"VulnInstance",
+        "hazfp_instance":"HazFPInstance"
+    }
+    # TODO: Maybe consolidate all of these dicts.
     # Valid dictionary types for Django mid-tier.
     # Ironically, stored in a dict that maps names to URLs.
-    dict_types = {
-        "lossbin":"/oasis/createLossBinDict",
-        "hazardintensitybin":"/oasis/createHazardIntensityBinDict",
-        "damagebin":"/oasis/createDamageBinDict",
-        "event":"/oasis/createEventDict",
-        "exposure":"/oasis/createExposureDict",
-        "areaperil":"/oasis/createAreaPerilDict",
-        "vuln":"/oasis/createVulnDict",
-        "exposure":"/oasis/createExposureDict"
-    }
-
-    version_types = {
-        "hazfp":"/oasis/createHazFPVersion",
-        "vuln":"/oasis/createVulnVersion"
-    }
-
     def __init__(self, base_url, pub_user):
         """ Initiating instance."""
         self.base_url = "http://tmrbmub01prd:8000"
@@ -123,7 +123,7 @@ class SpittalPond:
         """ Creates a dict with the upload and download IDs."""
         response = self.do_request(
             self.base_url +
-            self.dict_types[dict_type] + "/" +
+            "/oasis/create" + self.types[dict_type] + "/" +
             pub_user + "/" +
             str(module_supplier_id) + "/" +
             str(upload_id) + "/" +
@@ -136,7 +136,7 @@ class SpittalPond:
         """ Creates a version with the upload and download IDs."""
         response = self.do_request(
             self.base_url +
-            self.version_types[version_type] + "/" +
+            "/oasis/create" + self.types[version_type] + "/" +
             pub_user + "/" +
             str(module_supplier_id) + "/" +
             str(upload_id) + "/" +
@@ -168,10 +168,43 @@ class SpittalPond:
         response = self.do_request(
             self.base_url +
             "/oasis/createExposureInstance/" +
+            pname + "/" +
             str(exposure_version_id) + "/" +
             str(exposure_dict_id) + "/" +
             str(area_peril_dict_id) + "/" +
             str(vuln_dict_id) + "/"
+        )
+        print(response.content)
+        return response
+
+    def create_hazfp_instance(self, pname, hazfp_version_id,
+                                event_dict_id, area_peril_dict_id,
+                                hazard_intensity_bin_id, pkey):
+        """ Creates an instance of the hazfp data."""
+        response = self.do_request(
+            self.base_url +
+            "/oasis/createHazFPInstance/" +
+            pname + "/" +
+            str(hazfp_version_id) + "/" +
+            str(event_dict_id) + "/" +
+            str(area_peril_dict_id) + "/" +
+            str(hazard_intensity_bin_id) + "/" +
+            pkey + "/"
+        )
+        return response
+
+    def create_vuln_instance(self, pname, vuln_version_id, vuln_dict_id,
+                                hazard_intensity_bin_dict_id,
+                                damage_bin_dict_id, pkey):
+        response = self.do_request(
+            self.base_url +
+            "/oasis/createVulnInstance/" +
+            pname + "/" +
+            vuln_version_id + "/" +
+            vuln_dict_id + "/" +
+            hazard_intensity_bin_dict_id + "/" +
+            damage_bin_dict_id + "/" +
+            pkey + "/"
         )
         return response
 
@@ -179,19 +212,29 @@ class SpittalPond:
         """ Creates a task on the job queue. """
         response = self.do_request(
             self.base_url +
-            "/oasis/" + task_type + "/" +
+            "/oasis/doTask" + task_type + "/" +
             str(sys_config) + "/" +
-            upload_id + "/"
+            str(upload_id) + "/"
         )
         return response
 
     def create_timestamps(self):
-        """Create timestamp for destination files"""
+        """ Create timestamp for destination files"""
         str_now = time.strftime("%Y%m%d_%H%M%S_", time.localtime())
         return str_now
 
+    def check_status(self, job_id, config_id=1):
+        """ Get the status of the respective job."""
+        response = self.do_request(
+            self.base_url +
+            "/oasis/statusAsync/" +
+            str(config_id) + "/" +
+            str(job_id) + "/"
+        )
+        return response
+
     def upload_directory(self, directory_path, do_timestamps=True,
-                        module_supplier_id=1, pkey=1):
+                        module_supplier_id=27, pkey=1):
         """ Upload an entire directory of files.
 
         In order to acheive this I created a file naming convention.
@@ -236,13 +279,10 @@ class SpittalPond:
             # Save the data for later use.
             # Split the '.'s as well cause they are file extensions.
             splitname = filename.replace(".", "_").split("_")
-            #data_name = splitname[0] + "_" + splitname[1]
+            data_name = splitname[0] + "_" + splitname[1]
 
-            # Create an empty dict on first run.
-            if (splitname[0] in data_dict.keys()) == False:
-                data_dict[splitname[0]] = {}
-
-            data_dict[splitname[0]][splitname[1]] = {
+            # Update data_dict.
+            data_dict[data_name] = {
                 'filepath': pathname,
                 'upload_name': upload_filename,
                 'upload_id': up_id,
@@ -253,52 +293,119 @@ class SpittalPond:
 
         ##### Create the Model Structures ####
         # For dictionary types.
-        for dict_type, dict_ in data_dict['dict'].iteritems():
-            creation_response = self.create_dict(
-                dict_type,
-                dict_['upload_id'],
-                dict_['download_id'],
-                self.pub_user,
-                module_supplier_id
-            )
-            dict_['id'] = json.loads(creation_response.content)['id']
+        for type_name, type_ in data_dict.iteritems():
+            splitname = type_name.replace(".", "_").split("_")
+            if splitname[0] == 'dict':
+                creation_response = self.create_dict(
+                    type_name,
+                    type_['upload_id'],
+                    type_['download_id'],
+                    self.pub_user,
+                    module_supplier_id
+                )
+                type_['id'] = json.loads(creation_response.content)['id']
 
-        # For version types.
-        for version_type, version in data_dict['version'].iteritems():
-            creation_response = self.create_version(
-                version_type,
-                version['upload_id'],
-                version['download_id'],
-                self.pub_user,
-                module_supplier_id
-            )
-            version['id'] = json.loads(creation_response.content)['id']
+            elif splitname[0] == 'version':
+                # For version types.
+                creation_response = self.create_version(
+                    type_name,
+                    type_['upload_id'],
+                    type_['download_id'],
+                    "ModelKey",
+                    module_supplier_id
+                )
+                type_['id'] = json.loads(
+                    creation_response.content
+                )['id']
+
 
         # The correlations file simply has to be uploaded.
         # create_exposure_version() will take care of the rest.
-        for correlation in data_dict['correlations']:
-            pass
+
 
         # For now we are assuming that there is only one exposure version.
         # so we do not need to loop through.
         creation_response = self.create_exposure_version(
             self.pub_user,
             module_supplier_id,
-            data_dict['exposures']['main']['upload_id'],
-            data_dict['correlations']['main']['upload_id']
+            data_dict['exposures_main']['upload_id'],
+            data_dict['correlations_main']['upload_id']
         )
-        data_dict['exposures']['main']['id'] = json.loads(
+        data_dict['exposures_main']['id'] = json.loads(
             creation_response.content
         )['id']
 
         # Create the exposure instance.
-        self.create_exposure_instance(
+        data_dict['exposures_instance'] = {}
+        creation_response = self.create_exposure_instance(
             self.pub_user,
-            data_dict['exposures']['main']['id'],
-            data_dict['dict']['exposure']['id'],
-            data_dict['dict']['areaperil']['id'],
-            data_dict['dict']['vuln']['id']
+            data_dict['exposures_main']['id'],
+            data_dict['dict_exposure']['id'],
+            data_dict['dict_areaperil']['id'],
+            data_dict['dict_vuln']['id']
         )
+        data_dict['exposures_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        # Create the hazfp instance.
+        data_dict['hazfp_instance'] = {}
+        creation_response = self.create_hazfp_instance(
+            self.pub_user,
+            data_dict['version_hazfp']['id'],
+            data_dict['dict_event']['id'],
+            data_dict['dict_areaperil']['id'],
+            data_dict['dict_hazardintensitybin']['id'],
+            "ModelKey"
+        )
+        data_dict['hazfp_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        # Create vuln instance.
+        data_dict['vuln_instance'] = {}
+        creation_response = self.create_vuln_instance(
+            self.pub_user,
+            data_dict['version_vuln']['id'],
+            data_dict['dict_vuln']['id'],
+            data_dict['dict_hazardintensitybin']['id'],
+            data_dict['dict_damagebin']['id'],
+            "ModelKey"
+        )
+        data_dict['vuln_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+
+        # Do tasks (Load models)
+        for type_name, type_ in data_dict.iteritems():
+            # An exclude for correlations. Isn't created nor has an ID.
+            if type_name == "correlations_main":
+                continue
+            task_response = self.do_task(
+                self.types[type_name],
+                type_['id']
+            )
+            data_dict[type_name]['job_id'] = json.loads(
+                task_response.content
+            )['JobId']
 
         print("Finally done")
         return data_dict
+
+
+    def create_benchmark(self, name, hazfp_instance_id,
+                         exposure_instance_id, vuln_instance_id,
+                         chunk_size, min_chunk, max_chunk):
+        response = self.do_request(
+            self.base_url +
+            "/oasis/createBenchmark/" +
+            name + "/" +
+            str(hazfp_instance_id) + "/" +
+            str(exposure_instance_id) + "/" +
+            str(vuln_instance_id) + "/" +
+            str(chunk_size) + "/" +
+            str(min_chunk) + "/" +
+            str(max_chunk) + "/"
+        )
+        return response
