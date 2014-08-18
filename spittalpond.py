@@ -5,7 +5,7 @@ import time
 import os
 
 class SpittalPond:
-    """ Python implementation to the Oasis Django API
+    """ Python interface to the Oasis Django API.
 
     This class provides an easy to use front-end interface
     to the Oasis mid-tier Django API.
@@ -26,11 +26,13 @@ class SpittalPond:
         "vuln_instance":"VulnInstance",
         "hazfp_instance":"HazFPInstance"
     }
-    # TODO: Maybe consolidate all of these dicts.
-    # Valid dictionary types for Django mid-tier.
-    # Ironically, stored in a dict that maps names to URLs.
     def __init__(self, base_url, pub_user):
-        """ Initiating instance."""
+        """ Initiating instance.
+
+        Keyword arguments:
+        base_url -- server's domain name and/or port (without final slash).
+        pub_usr -- the public user used to name certain things.
+        """
         self.base_url = "http://tmrbmub01prd:8000"
         self.pub_user = "root"
         self.is_logged_in = False
@@ -41,6 +43,11 @@ class SpittalPond:
 
         Also automatically passes self.cookies to the post request.
         This authenticates each request.
+
+        Keyword arguments:
+        url -- the url to make a post request to.
+        in_data -- optional, used if data needs to be passed.
+        in_file_dict -- optional, passes file dict to server.
         """
         url_string=url
         response=requests.post(
@@ -52,7 +59,7 @@ class SpittalPond:
         return response
 
     def do_login(self, password):
-        """ Logs into Oasis Django mid-tier
+        """ Logs into Oasis Django mid-tier.
 
         Also, set self.cookies to the return session ID.
         This allows for future authentication.
@@ -78,8 +85,8 @@ class SpittalPond:
     def upload_file(self, local_absolute_filepath, upload_filename):
         """ Uploads a file to the server.
 
-        Uploads a local file but allows the option to rename it
-        before sending it up to the server.
+        Uploads a local file that is renamed on the server side to
+        the upload_filename argument.
         """
         url = self.base_url + "/oasis/doTaskUploadFileHelper/"
 
@@ -94,7 +101,15 @@ class SpittalPond:
 
     def create_file_upload(self, upload_filename,
                             pub_user, module_supplier_id):
-        """ Creates a file upload and returns the ID"""
+        """ Creates a file upload object and returns the ID
+
+        Keyword arguments:
+        upload_filename -- what the filename will be on the server.
+        pub_usr -- the public user used to name certain things.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
         up_response = self.do_request(
             self.base_url +
             "/oasis/createFileUpload/" +
@@ -107,7 +122,15 @@ class SpittalPond:
 
     def create_file_download(self, upload_filename,
                             pub_user, module_supplier_id):
-        """ Creates a file download and returns the ID"""
+        """ Creates a file download object and returns the ID
+
+        Keyword arguments:
+        upload_filename -- not to sure where this name is actually used.
+        pub_usr -- the public user used to name certain things.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
         down_response = self.do_request(
             self.base_url +
             "/oasis/createFileDownload/" +
@@ -120,7 +143,17 @@ class SpittalPond:
 
     def create_dict(self, dict_type, upload_id, download_id,
                     pub_user, module_supplier_id):
-        """ Creates a dict with the upload and download IDs."""
+        """ Creates a dict with the upload and download IDs.
+
+        Keyword arguments:
+        dict_type -- defines the type of dictionary to upload.
+        upload_id -- the id returned from create_file_upload().
+        download_id -- the id returned from _create_file_download().
+        pub_usr -- the public user used to name certain things.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/create" + self.types[dict_type] + "/" +
@@ -133,7 +166,17 @@ class SpittalPond:
 
     def create_version(self, version_type, upload_id, pkey,
                     pub_user, module_supplier_id):
-        """ Creates a version with the upload and download IDs."""
+        """ Creates a version with the upload and download IDs.
+
+        Keyword arguments:
+        version_type -- defines the type of version to upload.
+        upload_id -- the id returned from create_file_upload().
+        pkey -- UNKONW
+        pub_usr -- the public user used to name certain things.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/create" + self.types[version_type] + "/" +
@@ -148,8 +191,13 @@ class SpittalPond:
                                 upload_id, correlation_upload_id):
         """ Creates a new exposure version
 
-        Aruguments:
-        correlation_upload_id -- Correlation file upload id.
+        Keyword arguments:
+        pname -- UNKNOWN, assuming just a user-friendly name.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        upload_id -- the id returned from create_file_upload().
+        correlation_upload_id -- the id returned from the correlation file.
         """
         response = self.do_request(
             self.base_url +
@@ -164,7 +212,11 @@ class SpittalPond:
     def create_exposure_instance(self, pname, exposure_version_id,
                                 exposure_dict_id, area_peril_dict_id,
                                 vuln_dict_id):
-        """ Creates an instance of the exposure data. """
+        """ Creates an instance of the exposure data.
+
+        Keyword arguments:
+        pname -- UNKNOWN, assuming just a user-friendly name.
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createExposureInstance/" +
@@ -180,7 +232,12 @@ class SpittalPond:
     def create_hazfp_instance(self, pname, hazfp_version_id,
                                 event_dict_id, area_peril_dict_id,
                                 hazard_intensity_bin_id, pkey):
-        """ Creates an instance of the hazfp data."""
+        """ Creates an instance of the hazfp data.
+
+        Keyword arguments:
+        pname -- UNKNOWN, assuming just a user-friendly name.
+        pkey -- UNKNOWN
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createHazFPInstance/" +
@@ -196,6 +253,12 @@ class SpittalPond:
     def create_vuln_instance(self, pname, vuln_version_id, vuln_dict_id,
                                 hazard_intensity_bin_dict_id,
                                 damage_bin_dict_id, pkey):
+        """ Creates an instance of the vulnerability data.
+
+        Keyword arguments:
+        pname -- UNKNOWN, assuming just a user-friendly name.
+        pkey -- UNKNOWN
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createVulnInstance/" +
@@ -209,7 +272,13 @@ class SpittalPond:
         return response
 
     def do_task(self, task_type, upload_id, sys_config=1):
-        """ Creates a task on the job queue. """
+        """ Creates a task on the job queue.
+
+        Keyword arguments:
+        task_type -- type of task to be added to the queue.
+        upload_id -- upload_id of the file to create task for.
+        sys_config -- UNKNOWN
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/doTask" + task_type + "/" +
@@ -224,7 +293,12 @@ class SpittalPond:
         return str_now
 
     def check_status(self, job_id, config_id=1):
-        """ Get the status of the respective job."""
+        """ Get the status of the respective job.
+
+        Keyword arguments:
+        job_id -- id of the job to check status of.
+        config_id -- UNKNOWN
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/statusAsync/" +
@@ -234,13 +308,19 @@ class SpittalPond:
         return response
 
     def upload_directory(self, directory_path, do_timestamps=True,
-                        module_supplier_id=27, pkey=1):
+                        module_supplier_id=1, pkey=1):
         """ Upload an entire directory of files.
 
-        In order to acheive this I created a file naming convention.
+        In order to achieve this I created a file naming convention.
+
+        Keyword arguments:
+        directory_path -- path to the directory to upload from.
+        do_timestamps -- optional, timestamps files or not?
+        module_supplier_id -- set an overall module supplier for uploading.
+        pkey -- UNKNOWN
         """
 
-        ##### Create all file uploads and upload files #####
+        ##### Create all file uploads and actually upload the files #####
 
         # The data_dict stores all the information on uploaded files
         # and there respective structures.
@@ -270,31 +350,30 @@ class SpittalPond:
                 module_supplier_id
             )
 
-            # Actually Upload the File
+            # Actually upload the file to the server.
             self.upload_file(
                 pathname,
                 upload_filename
             )
 
-            # Save the data for later use.
             # Split the '.'s as well cause they are file extensions.
             splitname = filename.replace(".", "_").split("_")
             data_name = splitname[0] + "_" + splitname[1]
 
+            # Save the data for later use.
             # Update data_dict.
             data_dict[data_name] = {
                 'filepath': pathname,
                 'upload_name': upload_filename,
                 'upload_id': up_id,
                 'download_id': down_id,
-                #'id': json.loads(creation_response.content)['id']
             }
 
 
         ##### Create the Model Structures ####
-        # For dictionary types.
         for type_name, type_ in data_dict.iteritems():
             splitname = type_name.replace(".", "_").split("_")
+            # For dictionary types.
             if splitname[0] == 'dict':
                 creation_response = self.create_dict(
                     type_name,
@@ -321,7 +400,6 @@ class SpittalPond:
 
         # The correlations file simply has to be uploaded.
         # create_exposure_version() will take care of the rest.
-
 
         # For now we are assuming that there is only one exposure version.
         # so we do not need to loop through.
