@@ -226,7 +226,6 @@ class SpittalPond:
             str(area_peril_dict_id) + "/" +
             str(vuln_dict_id) + "/"
         )
-        print(response.content)
         return response
 
     def create_hazfp_instance(self, pname, hazfp_version_id,
@@ -307,6 +306,115 @@ class SpittalPond:
         )
         return response
 
+    def create_model_structures(self, data_dict, module_supplier_id=1):
+        """ Creates supporting module structure from the data_dict. """
+        ##### Create the Model Structures ####
+        for type_name, type_ in data_dict.iteritems():
+            splitname = type_name.replace(".", "_").split("_")
+            # For dictionary types.
+            if splitname[0] == 'dict':
+                creation_response = self.create_dict(
+                    type_name,
+                    type_['upload_id'],
+                    type_['download_id'],
+                    self.pub_user,
+                    module_supplier_id
+                )
+                type_['id'] = json.loads(creation_response.content)['id']
+
+            elif splitname[0] == 'version':
+                # For version types.
+                creation_response = self.create_version(
+                    type_name,
+                    type_['upload_id'],
+                    type_['download_id'],
+                    "ModelKey", # What is this?!
+                    module_supplier_id
+                )
+                type_['id'] = json.loads(
+                    creation_response.content
+                )['id']
+
+
+        # The correlations file simply has to be uploaded.
+        # create_exposure_version() will take care of the rest.
+
+        # For now we assume that there is only one exposure version.
+        # so we do not need to loop through.
+        creation_response = self.create_exposure_version(
+            self.pub_user,
+            module_supplier_id,
+            data_dict['exposures_main']['upload_id'],
+            data_dict['correlations_main']['upload_id']
+        )
+        data_dict['exposures_main']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        # Create the exposure instance.
+        data_dict['exposures_instance'] = {}
+        creation_response = self.create_exposure_instance(
+            self.pub_user,
+            data_dict['exposures_main']['id'],
+            data_dict['dict_exposure']['id'],
+            data_dict['dict_areaperil']['id'],
+            data_dict['dict_vuln']['id']
+        )
+        data_dict['exposures_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        # Create the hazfp instance.
+        data_dict['hazfp_instance'] = {}
+        creation_response = self.create_hazfp_instance(
+            self.pub_user,
+            data_dict['version_hazfp']['id'],
+            data_dict['dict_event']['id'],
+            data_dict['dict_areaperil']['id'],
+            data_dict['dict_hazardintensitybin']['id'],
+            "ModelKey"
+        )
+        data_dict['hazfp_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        # Create vuln instance.
+        data_dict['vuln_instance'] = {}
+        creation_response = self.create_vuln_instance(
+            self.pub_user,
+            data_dict['version_vuln']['id'],
+            data_dict['dict_vuln']['id'],
+            data_dict['dict_hazardintensitybin']['id'],
+            data_dict['dict_damagebin']['id'],
+            "ModelKey"
+        )
+        data_dict['vuln_instance']['id'] = json.loads(
+            creation_response.content
+        )['id']
+
+        print("Created model structures")
+        return data_dict
+
+    def load_models(self, data_dict):
+        """ Do tasks, load up models.
+
+        Adds all the tasks in the data_dict to the job queue.
+        """
+        for type_name, type_ in data_dict.iteritems():
+            # An exclude for correlations. Isn't created nor has an ID.
+            if type_name == "correlations_main":
+                continue
+            task_response = self.do_task(
+                self.types[type_name],
+                type_['id']
+            )
+            data_dict[type_name]['job_id'] = json.loads(
+                task_response.content
+            )['JobId']
+
+        print("Loaded model")
+        return data_dict
+
     def upload_directory(self, directory_path, do_timestamps=True,
                         module_supplier_id=1, pkey=1):
         """ Upload an entire directory of files.
@@ -369,106 +477,7 @@ class SpittalPond:
                 'download_id': down_id,
             }
 
-
-        ##### Create the Model Structures ####
-        for type_name, type_ in data_dict.iteritems():
-            splitname = type_name.replace(".", "_").split("_")
-            # For dictionary types.
-            if splitname[0] == 'dict':
-                creation_response = self.create_dict(
-                    type_name,
-                    type_['upload_id'],
-                    type_['download_id'],
-                    self.pub_user,
-                    module_supplier_id
-                )
-                type_['id'] = json.loads(creation_response.content)['id']
-
-            elif splitname[0] == 'version':
-                # For version types.
-                creation_response = self.create_version(
-                    type_name,
-                    type_['upload_id'],
-                    type_['download_id'],
-                    "ModelKey",
-                    module_supplier_id
-                )
-                type_['id'] = json.loads(
-                    creation_response.content
-                )['id']
-
-
-        # The correlations file simply has to be uploaded.
-        # create_exposure_version() will take care of the rest.
-
-        # For now we are assuming that there is only one exposure version.
-        # so we do not need to loop through.
-        creation_response = self.create_exposure_version(
-            self.pub_user,
-            module_supplier_id,
-            data_dict['exposures_main']['upload_id'],
-            data_dict['correlations_main']['upload_id']
-        )
-        data_dict['exposures_main']['id'] = json.loads(
-            creation_response.content
-        )['id']
-
-        # Create the exposure instance.
-        data_dict['exposures_instance'] = {}
-        creation_response = self.create_exposure_instance(
-            self.pub_user,
-            data_dict['exposures_main']['id'],
-            data_dict['dict_exposure']['id'],
-            data_dict['dict_areaperil']['id'],
-            data_dict['dict_vuln']['id']
-        )
-        data_dict['exposures_instance']['id'] = json.loads(
-            creation_response.content
-        )['id']
-
-        # Create the hazfp instance.
-        data_dict['hazfp_instance'] = {}
-        creation_response = self.create_hazfp_instance(
-            self.pub_user,
-            data_dict['version_hazfp']['id'],
-            data_dict['dict_event']['id'],
-            data_dict['dict_areaperil']['id'],
-            data_dict['dict_hazardintensitybin']['id'],
-            "ModelKey"
-        )
-        data_dict['hazfp_instance']['id'] = json.loads(
-            creation_response.content
-        )['id']
-
-        # Create vuln instance.
-        data_dict['vuln_instance'] = {}
-        creation_response = self.create_vuln_instance(
-            self.pub_user,
-            data_dict['version_vuln']['id'],
-            data_dict['dict_vuln']['id'],
-            data_dict['dict_hazardintensitybin']['id'],
-            data_dict['dict_damagebin']['id'],
-            "ModelKey"
-        )
-        data_dict['vuln_instance']['id'] = json.loads(
-            creation_response.content
-        )['id']
-
-
-        # Do tasks (Load models)
-        for type_name, type_ in data_dict.iteritems():
-            # An exclude for correlations. Isn't created nor has an ID.
-            if type_name == "correlations_main":
-                continue
-            task_response = self.do_task(
-                self.types[type_name],
-                type_['id']
-            )
-            data_dict[type_name]['job_id'] = json.loads(
-                task_response.content
-            )['JobId']
-
-        print("Finally done")
+        print("Uploaded directory")
         return data_dict
 
 
