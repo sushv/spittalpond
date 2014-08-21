@@ -276,7 +276,7 @@ class SpittalPond:
         Keyword arguments:
         task_type -- type of task to be added to the queue.
         upload_id -- upload_id of the file to create task for.
-        sys_config -- UNKNOWN
+        sys_config -- defines where and how to load the data.
         """
         response = self.do_request(
             self.base_url +
