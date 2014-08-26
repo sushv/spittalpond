@@ -1,5 +1,8 @@
 import json
 from spittalbase import SpittalBase
+import logging
+
+logger = logging.getLogger('spittalpond')
 
 class SpittalModel(SpittalBase):
     """ Handles everything model related. """
@@ -36,6 +39,7 @@ class SpittalModel(SpittalBase):
                               See /oasis/django/oasis/app/scripts/Dict
         """
         ##### Create the Model Structures ####
+        logger.info('Creating the model structures.')
         for type_name, type_ in self.data_dict.iteritems():
             splitname = type_name.replace(".", "_").split("_")
             # For dictionary types.
@@ -46,6 +50,10 @@ class SpittalModel(SpittalBase):
                     type_['download_id'],
                     self.pub_user,
                     module_supplier_id
+                )
+                logger.info(
+                    'Create dict {dict_} response: '.format(dict_=type_name) +
+                    str(creation_response.content)
                 )
                 type_['id'] = json.loads(creation_response.content)['id']
 
@@ -58,9 +66,16 @@ class SpittalModel(SpittalBase):
                     "ModelKey", # What is this?!
                     module_supplier_id
                 )
+                logger.info(
+                    'Create version {version} response: '
+                    .format(version=type_name) +
+                    str(creation_response.content)
+                )
+
                 type_['id'] = json.loads(
                     creation_response.content
                 )['id']
+
         print('Finished creating model strutures.')
 
     # TODO: Finish creating this method.

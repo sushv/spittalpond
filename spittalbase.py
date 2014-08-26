@@ -5,6 +5,8 @@ import time
 import os
 import logging
 
+logger = logging.getLogger('spittalpond')
+
 class SpittalBase():
     """ A base class that contains generic spittal functions
 
@@ -87,6 +89,8 @@ class SpittalBase():
         else:
             self.cookies = dict(sessionid=response.cookies['sessionid'])
             print("You are logged into Mid-tier")
+
+        logger.info( 'Log in response ' + str(response.content))
 
     def create_file_upload(self, upload_filename,
                             pub_user, module_supplier_id):
@@ -273,6 +277,7 @@ class SpittalBase():
 
         Adds all the tasks in the data_dict to the job queue.
         """
+        logger.info('Loading {name} data'.format(name=self.__class__.__name__))
         for type_name, type_ in self.data_dict.iteritems():
             # An exclude for correlations. Isn't created nor has an ID.
             if type_name == "correlations_main":
@@ -284,5 +289,9 @@ class SpittalBase():
             self.data_dict[type_name]['job_id'] = json.loads(
                 task_response.content
             )['JobId']
+            logger.info(
+                'Load {name} response: '.format(name=type_name) +
+                task_response.content
+            )
 
         print("Loaded model")

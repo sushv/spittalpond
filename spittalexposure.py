@@ -1,5 +1,8 @@
 import json
 from spittalbase import SpittalBase
+import logging
+
+logger = logging.getLogger('spittalpond')
 
 class SpittalExposure(SpittalBase):
     """ Handles everything exposure related.
@@ -27,6 +30,10 @@ class SpittalExposure(SpittalBase):
             str(module_supplier_id) + "/" +
             str(upload_id) + "/" +
             str(correlation_upload_id) + "/"
+        )
+        logger.info(
+            'Create_exposure_version response ' +
+            str(response.content)
         )
         return response
 
@@ -116,6 +123,7 @@ class SpittalExposure(SpittalBase):
                               See /oasis/django/oasis/app/scripts/Dict
         """
 
+        logger.info('Creating the exposure strutuces.')
         # Upload the lone dictionary.
         creation_response = self.create_dict(
             "dict_exposure",
@@ -124,6 +132,8 @@ class SpittalExposure(SpittalBase):
             self.pub_user,
             module_supplier_id
         )
+        logger.info('Create dict_exposure response: ' + creation_response.content)
+
         self.data_dict['dict_exposure']['id'] = json.loads(
             creation_response.content
         )['id']
@@ -139,6 +149,8 @@ class SpittalExposure(SpittalBase):
             self.data_dict['exposures_main']['upload_id'],
             self.data_dict['correlations_main']['upload_id']
         )
+        logger.info('Create exposure_verion response: ' + creation_response.content)
+
         self.data_dict['exposures_main']['id'] = json.loads(
             creation_response.content
         )['id']
@@ -152,6 +164,8 @@ class SpittalExposure(SpittalBase):
             model_data_dict['dict_areaperil']['id'],
             model_data_dict['dict_vuln']['id']
         )
+        logger.info('Create exposure_instance response: ' + creation_response.content)
+
         self.data_dict['exposures_instance']['id'] = json.loads(
             creation_response.content
         )['id']
@@ -166,6 +180,8 @@ class SpittalExposure(SpittalBase):
             model_data_dict['dict_hazardintensitybin']['id'],
             "ModelKey"
         )
+        logger.info('Create hazfp_verion response: ' + creation_response.content)
+
         self.data_dict['hazfp_instance']['id'] = json.loads(
             creation_response.content
         )['id']
@@ -180,6 +196,8 @@ class SpittalExposure(SpittalBase):
             model_data_dict['dict_damagebin']['id'],
             "ModelKey"
         )
+        logger.info('Create vuln_instance response: ' + creation_response.content)
+
         self.data_dict['vuln_instance']['id'] = json.loads(
             creation_response.content
         )['id']
