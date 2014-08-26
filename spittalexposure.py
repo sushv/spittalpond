@@ -2,7 +2,11 @@ import json
 from spittalbase import SpittalBase
 
 class SpittalExposure(SpittalBase):
-    """ Handles everything exposure related. """
+    """ Handles everything exposure related.
+
+    Mainly used for creating exposure instances for a specified model.
+    Also, can create a benchmark for an exposure.
+    """
 
     def create_exposure_version(self, pname, module_supplier_id,
                                 upload_id, correlation_upload_id):
@@ -33,6 +37,10 @@ class SpittalExposure(SpittalBase):
 
         Keyword arguments:
         pname -- UNKNOWN, assuming just a user-friendly name.
+        exposure_version_id -- id returned by the respective do_task() method.
+        exposure_dict_id -- id returned by the respective do_task() method.
+        area_peril_dict_id -- id returned by the respective do_task() method.
+        vuln_dict_id -- id returned by the respective do_task() method.
         """
         response = self.do_request(
             self.base_url +
@@ -52,6 +60,10 @@ class SpittalExposure(SpittalBase):
 
         Keyword arguments:
         pname -- UNKNOWN, assuming just a user-friendly name.
+        hazfp_version_id -- id returned by the respective do_task() method.
+        event_dict_id -- id returned by the respective do_task() method.
+        area_peril_id -- id returned by the respective do_task() method.
+        hazard_intensity_bin_id -- id returned by the respective do_task() method.
         pkey -- UNKNOWN
         """
         response = self.do_request(
@@ -73,6 +85,10 @@ class SpittalExposure(SpittalBase):
 
         Keyword arguments:
         pname -- UNKNOWN, assuming just a user-friendly name.
+        vuln_version_id -- id returned by the respective do_task() method.
+        vuln_dict_id -- id returned by the respective do_task() method.
+        hazard_intensity_bin_dict_id -- id returned by the respective do_task() method.
+        damage_bin_dict_id -- id returned by the respective do_task() method.
         pkey -- UNKNOWN
         """
         response = self.do_request(
@@ -91,7 +107,14 @@ class SpittalExposure(SpittalBase):
     # So it will only run is the 3 specific exposure files are present.
     # Work on making it more dynamic.
     def create_exposure_structure(self, model_data_dict, module_supplier_id=1):
-        """ Creates supporting exposure structure from the data_dict. """
+        """ Creates supporting exposure structure from the data_dict.
+
+        Keyword arguments:
+        model_data_dict -- the model data to build the exposure onto.
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
 
         # Upload the lone dictionary.
         creation_response = self.create_dict(
@@ -164,6 +187,14 @@ class SpittalExposure(SpittalBase):
 
     def create_benchmark(self, name="Benchmark", chunk_size=10,
                         min_chunk=4, max_chunk=4):
+        """ Creates a benchmark task based on this exposure.
+
+        Keyword arguments:
+        name -- the name of the benchmark.
+        chunk_size -- the number of simulations to run each chunk.
+        min_chunk -- UNKNOWN
+        max_chunk -- UNKNOWN
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createBenchmark/" +

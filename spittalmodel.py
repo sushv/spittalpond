@@ -28,7 +28,13 @@ class SpittalModel(SpittalBase):
         return response
 
     def create_model_structures(self, module_supplier_id=1):
-        """ Creates supporting module structure from the data_dict. """
+        """ Creates supporting module structure from the data_dict.
+
+        Keyword arguments:
+        module_supplier_id -- id of the module that supplies the
+                              python and SQL code for this file.
+                              See /oasis/django/oasis/app/scripts/Dict
+        """
         ##### Create the Model Structures ####
         for type_name, type_ in self.data_dict.iteritems():
             splitname = type_name.replace(".", "_").split("_")
@@ -43,8 +49,8 @@ class SpittalModel(SpittalBase):
                 )
                 type_['id'] = json.loads(creation_response.content)['id']
 
+            # For version types.
             elif splitname[0] == 'version':
-                # For version types.
                 creation_response = self.create_version(
                     type_name,
                     type_['upload_id'],
@@ -56,3 +62,12 @@ class SpittalModel(SpittalBase):
                     creation_response.content
                 )['id']
         print('Finished creating model strutures.')
+
+    # TODO: Finish creating this method.
+    def get_model(self, model_name):
+        """ Return a previously uploaded model from the database.
+
+        Keyword arguments:
+        model_name -- The name that the model was uploaded with.
+        """
+        pass

@@ -1,7 +1,6 @@
 from spittalmodel import SpittalModel
 from spittalexposure import SpittalExposure
 
-# TODO: How should I have this main class have a login method?
 class SpittalPond():
     """ Python interface to the Oasis Django API.
 

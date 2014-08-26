@@ -142,7 +142,6 @@ class SpittalBase():
             in_file = f
             response = self.do_request(
                 url,
-                #TODO: Get the upload_filename to actually work.
                 in_file_dict={upload_filename:in_file}
             )
             return response
@@ -190,7 +189,7 @@ class SpittalBase():
         Keyword arguments:
         dict_type -- defines the type of dictionary to upload.
         upload_id -- the id returned from create_file_upload().
-        download_id -- the id returned from _create_file_download().
+        download_id -- the id returned from create_file_download().
         pub_usr -- the public user used to name certain things.
         module_supplier_id -- id of the module that supplies the
                               python and SQL code for this file.
@@ -219,8 +218,6 @@ class SpittalBase():
         module_supplier_id -- set an overall module supplier for uploading.
         pkey -- UNKNOWN
         """
-
-        ##### Create all file uploads and actually upload the files #####
 
         # The data_dict stores all the information on uploaded files
         # and there respective structures.
