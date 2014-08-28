@@ -16,7 +16,10 @@ class SpittalBase():
 
     # TODO: Maybe have individual type for each sub class?
     # Each subclass only really needs to know about itself.
+    # TODO: fix the naming of instance here.
+    # The instance suffix shoudl come first.
     types = {
+        # correlations is special, it's just a file, that's all!
         "correlations_main":None,
         "dict_areaperil":"AreaPerilDict",
         "dict_damagebin":"DamageBinDict",
@@ -29,7 +32,12 @@ class SpittalBase():
         "version_hazfp":"HazFPVersion",
         "version_vuln":"VulnVersion",
         "vuln_instance":"VulnInstance",
-        "hazfp_instance":"HazFPInstance"
+        "hazfp_instance":"HazFPInstance",
+        "kernel_cdf":"CDF",
+        "kernel_cdfsamples":"CDFSamples",
+        "kernel_gul":"GUL",
+		"kernel_pubgul": "PubGUL",
+
     }
 
     def __init__(self, base_url, pub_user):
@@ -169,6 +177,15 @@ class SpittalBase():
             )
             return response
 
+    def download_file(self, download_id):
+        response = self.do_request(
+            self.base_url +
+            "/oasis/doTaskDownloadFileHelper/" +
+            download_id + "/"
+        )
+        return response
+
+
     def create_timestamps(self):
         """ Create timestamp for destination files
 
@@ -304,7 +321,7 @@ class SpittalBase():
 
         print("Uploaded directory")
 
-
+    # TODO: Appropriately name this method.
     def load_models(self):
         """ Do tasks, load up models.
 

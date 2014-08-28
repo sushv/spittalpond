@@ -11,3 +11,4 @@ Todo List (in priority order):
        Better yet, have that list update all of the arguments in my code.
  - [ ] Rather than trying to explain too much of the code in external documents
        throw in a few doctests to show example usage.
+ - [ ] We really need to create a decorator to strify those int arguments...

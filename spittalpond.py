@@ -1,5 +1,6 @@
 from spittalmodel import SpittalModel
 from spittalexposure import SpittalExposure
+from spittalrun import SpittalRun
 import logging
 
 class SpittalPond():
@@ -23,3 +24,4 @@ class SpittalPond():
 
         self.model = SpittalModel(base_url, pub_user)
         self.exposure = SpittalExposure(base_url, pub_user)
+        self.run = SpittalRun(base_url, pub_user)
