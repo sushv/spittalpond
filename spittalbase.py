@@ -35,9 +35,9 @@ class SpittalBase():
     def __init__(self, base_url, pub_user):
         """ Initiating instance.
 
-        Keyword arguments:
-        base_url -- server's domain name and/or port (without final slash).
-        pub_usr -- the public user used to name certain things.
+        Args:
+            base_url (str): server's domain name and/or port (without final slash).
+            pub_usr (str): the public user used to name certain things.
         """
         self.base_url = base_url
         self.pub_user = pub_user
@@ -52,10 +52,13 @@ class SpittalBase():
         Also automatically passes self.cookies to the post request.
         This authenticates each request.
 
-        Keyword arguments:
-        url -- the url to make a post request to.
-        in_data -- optional, used if data needs to be passed.
-        in_file_dict -- optional, passes file dict to server.
+        Args:
+            url (str): the url to make a post request to.
+            in_data (dict): optional, used if data needs to be passed.
+            in_file_dict (dict): optional, passes file dict to server.
+
+        Returns:
+            HttpResponse: server's response
         """
         url_string=url
         response=requests.post(
@@ -71,6 +74,9 @@ class SpittalBase():
 
         Also, set self.cookies to the return session ID.
         This allows for future authentication.
+
+        Args:
+            password (str): server Djanger user password.
         """
         # Creating JSON string with authentication credentails.
         in_data = ('{{ "username":"{username}",'
@@ -96,12 +102,15 @@ class SpittalBase():
                             pub_user, module_supplier_id):
         """ Creates a file upload object and returns the ID
 
-        Keyword arguments:
-        upload_filename -- what the filename will be on the server.
-        pub_usr -- the public user used to name certain things.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            upload_filename (str): what the filename will be on the server.
+            pub_usr (str): the public user used to name certain things.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+
+        Returns:
+            int: file upload id.
         """
         up_response = self.do_request(
             self.base_url +
@@ -117,12 +126,15 @@ class SpittalBase():
                             pub_user, module_supplier_id):
         """ Creates a file download object and returns the ID
 
-        Keyword arguments:
-        upload_filename -- not to sure where this name is actually used.
-        pub_usr -- the public user used to name certain things.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            upload_filename (str): not to sure where this name is actually used.
+            pub_usr (str): the public user used to name certain things.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+
+        Returns:
+            int: file download id
         """
         down_response = self.do_request(
             self.base_url +
@@ -139,6 +151,13 @@ class SpittalBase():
 
         Uploads a local file that is renamed on the server side to
         the upload_filename argument.
+
+        Args:
+            local_absolute_filepath (str): path to the file we need to upload.
+            upload_filename (str): the name for the server-side file.
+
+        Returns:
+            HttpResponse: server's response.
         """
         url = self.base_url + "/oasis/doTaskUploadFileHelper/"
 
@@ -151,16 +170,23 @@ class SpittalBase():
             return response
 
     def create_timestamps(self):
-        """ Create timestamp for destination files"""
+        """ Create timestamp for destination files
+
+        Returns:
+            str: a timestamnp of the current time.
+        """
         str_now = time.strftime("%Y%m%d_%H%M%S_", time.localtime())
         return str_now
 
     def check_status(self, job_id, config_id=1):
         """ Get the status of the respective job.
 
-        Keyword arguments:
-        job_id -- id of the job to check status of.
-        config_id -- UNKNOWN
+        Args:
+            job_id (str): id of the job to check status of.
+            config_id (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -173,10 +199,14 @@ class SpittalBase():
     def do_task(self, task_type, upload_id, sys_config=1):
         """ Creates a task on the job queue.
 
-        Keyword arguments:
-        task_type -- type of task to be added to the queue.
-        upload_id -- upload_id of the file to create task for.
-        sys_config -- defines where and how to load the data.
+        Args:
+            task_type (str): type of task to be added to the queue.
+            upload_id (int): upload_id of the file to create task for.
+            sys_config (int): defines where and how to load the data.
+
+        Returns:
+            HttpResponse: server's response.
+
         """
         response = self.do_request(
             self.base_url +
@@ -190,14 +220,17 @@ class SpittalBase():
                     pub_user, module_supplier_id):
         """ Creates a dict with the upload and download IDs.
 
-        Keyword arguments:
-        dict_type -- defines the type of dictionary to upload.
-        upload_id -- the id returned from create_file_upload().
-        download_id -- the id returned from create_file_download().
-        pub_usr -- the public user used to name certain things.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            dict_type (str): defines the type of dictionary to upload.
+            upload_id (int): the id returned from create_file_upload().
+            download_id (int): the id returned from create_file_download().
+            pub_usr (str): the public user used to name certain things.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -216,11 +249,11 @@ class SpittalBase():
 
         In order to achieve this I created a file naming convention.
 
-        Keyword arguments:
-        directory_path -- path to the directory to upload from.
-        do_timestamps -- optional, timestamps files or not?
-        module_supplier_id -- set an overall module supplier for uploading.
-        pkey -- UNKNOWN
+        Args:
+            directory_path (str): path to the directory to upload from.
+            do_timestamps (bool): optional, timestamps files or not?
+            module_supplier_id (int): overall module supplier for uploading.
+            pkey (int): UNKNOWN
         """
 
         # The data_dict stores all the information on uploaded files

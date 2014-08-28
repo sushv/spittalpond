@@ -15,13 +15,16 @@ class SpittalExposure(SpittalBase):
                                 upload_id, correlation_upload_id):
         """ Creates a new exposure version
 
-        Keyword arguments:
-        pname -- UNKNOWN, assuming just a user-friendly name.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
-        upload_id -- the id returned from create_file_upload().
-        correlation_upload_id -- the id returned from the correlation file.
+        Args:
+            pname (str): UNKNOWN, assuming just a user-friendly name.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+            upload_id (int): the id returned from create_file_upload().
+            correlation_upload_id (int): id returned from the correlation file.
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -42,12 +45,15 @@ class SpittalExposure(SpittalBase):
                                 vuln_dict_id):
         """ Creates an instance of the exposure data.
 
-        Keyword arguments:
-        pname -- UNKNOWN, assuming just a user-friendly name.
-        exposure_version_id -- id returned by the respective do_task() method.
-        exposure_dict_id -- id returned by the respective do_task() method.
-        area_peril_dict_id -- id returned by the respective do_task() method.
-        vuln_dict_id -- id returned by the respective do_task() method.
+        Args:
+            pname (str): UNKNOWN, assuming just a user-friendly name.
+            exposure_version_id (int): id returned by the respective do_task() method.
+            exposure_dict_id (int): id returned by the respective do_task() method.
+            area_peril_dict_id (int): id returned by the respective do_task() method.
+            vuln_dict_id (int): id returned by the respective do_task() method.
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -65,13 +71,16 @@ class SpittalExposure(SpittalBase):
                                 hazard_intensity_bin_id, pkey):
         """ Creates an instance of the hazfp data.
 
-        Keyword arguments:
-        pname -- UNKNOWN, assuming just a user-friendly name.
-        hazfp_version_id -- id returned by the respective do_task() method.
-        event_dict_id -- id returned by the respective do_task() method.
-        area_peril_id -- id returned by the respective do_task() method.
-        hazard_intensity_bin_id -- id returned by the respective do_task() method.
-        pkey -- UNKNOWN
+        Args:
+            pname (str): UNKNOWN, assuming just a user-friendly name.
+            hazfp_version_id (int): id returned by the respective do_task() method.
+            event_dict_id (int): id returned by the respective do_task() method.
+            area_peril_id (int): id returned by the respective do_task() method.
+            hazard_intensity_bin_id (int): id returned by the respective do_task() method.
+            pkey (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -90,13 +99,16 @@ class SpittalExposure(SpittalBase):
                                 damage_bin_dict_id, pkey):
         """ Creates an instance of the vulnerability data.
 
-        Keyword arguments:
-        pname -- UNKNOWN, assuming just a user-friendly name.
-        vuln_version_id -- id returned by the respective do_task() method.
-        vuln_dict_id -- id returned by the respective do_task() method.
-        hazard_intensity_bin_dict_id -- id returned by the respective do_task() method.
-        damage_bin_dict_id -- id returned by the respective do_task() method.
-        pkey -- UNKNOWN
+        Args:
+            pname (str): UNKNOWN, assuming just a user-friendly name.
+            vuln_version_id (int): id returned by the respective do_task() method.
+            vuln_dict_id (int): id returned by the respective do_task() method.
+            hazard_intensity_bin_dict_id (int): id returned by the respective do_task() method.
+            damage_bin_dict_id (int): id returned by the respective do_task() method.
+            pkey (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -116,11 +128,11 @@ class SpittalExposure(SpittalBase):
     def create_exposure_structure(self, model_data_dict, module_supplier_id=1):
         """ Creates supporting exposure structure from the data_dict.
 
-        Keyword arguments:
-        model_data_dict -- the model data to build the exposure onto.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            model_data_dict (dict): the model data to build the exposure onto.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
         """
 
         logger.info('Creating the exposure strutuces.')
@@ -207,11 +219,14 @@ class SpittalExposure(SpittalBase):
                         min_chunk=4, max_chunk=4):
         """ Creates a benchmark task based on this exposure.
 
-        Keyword arguments:
-        name -- the name of the benchmark.
-        chunk_size -- the number of simulations to run each chunk.
-        min_chunk -- UNKNOWN
-        max_chunk -- UNKNOWN
+        Args:
+            name (str): the name of the benchmark.
+            chunk_size (int): the number of simulations to run each chunk.
+            min_chunk (int): UNKNOWN
+            max_chunk (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +

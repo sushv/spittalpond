@@ -11,14 +11,17 @@ class SpittalModel(SpittalBase):
                        pub_user, module_supplier_id):
         """ Creates a version with the upload and download IDs.
 
-        Keyword arguments:
-        version_type -- defines the type of version to upload.
-        upload_id -- the id returned from create_file_upload().
-        pkey -- UNKONW
-        pub_usr -- the public user used to name certain things.
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            version_type (str): defines the type of version to upload.
+            upload_id (int): the id returned from create_file_upload().
+            pkey (int): UNKONW
+            pub_usr (str): the public user used to name certain things.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+
+        Returns:
+            HttpResponse: server's response.
         """
         response = self.do_request(
             self.base_url +
@@ -33,10 +36,10 @@ class SpittalModel(SpittalBase):
     def create_model_structures(self, module_supplier_id=1):
         """ Creates supporting module structure from the data_dict.
 
-        Keyword arguments:
-        module_supplier_id -- id of the module that supplies the
-                              python and SQL code for this file.
-                              See /oasis/django/oasis/app/scripts/Dict
+        Args:
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
         """
         ##### Create the Model Structures ####
         logger.info('Creating the model structures.')
@@ -82,7 +85,7 @@ class SpittalModel(SpittalBase):
     def get_model(self, model_name):
         """ Return a previously uploaded model from the database.
 
-        Keyword arguments:
-        model_name -- The name that the model was uploaded with.
+        Args:
+            model_name -- The name that the model was uploaded with.
         """
         pass

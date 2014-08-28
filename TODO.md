@@ -6,3 +6,7 @@ Todo List (in priority order):
  - [ ] Possibly create logger_messages.py to consolidate all messages.
  - [ ] Optional logger setting. Be able to turn logging off.
  - [ ] Rename 'structure' with the correcty terminology of 'Django model object'.
+ - [ ] Better documentation of parameters. Maybe even have a consolidated list somehwere.
+       Better yet, have that list update all of the arguments in my code.
+ - [ ] Rather than trying to explain too much of the code in external documents
+       throw in a few doctests to show example usage.

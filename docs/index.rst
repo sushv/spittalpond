@@ -9,10 +9,12 @@ Welcome to spitttalpond's documentation!
 Contents:
 
 .. toctree::
-   :maxdepth: 2
+    :maxdepth: 2
 
-   spittalmodel.rst
-   spittalexposure.rst
+    spittalpond.rst
+    spittalbase.rst
+    spittalmodel.rst
+    spittalexposure.rst
 
 Indices and tables
 ==================
