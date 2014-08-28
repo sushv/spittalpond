@@ -1,0 +1,422 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spittalbase &mdash; spitttalpond 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for spittalbase</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">glob</span>
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;spittalpond&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpittalBase"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase">[docs]</a><span class="k">class</span> <span class="nc">SpittalBase</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; A base class that contains generic spittal functions</span>
+
+<span class="sd">    Classes such as SpittalModel and SpittalExposures will import this one.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="c"># TODO: Maybe have individual type for each sub class?</span>
+    <span class="c"># Each subclass only really needs to know about itself.</span>
+    <span class="n">types</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&quot;correlations_main&quot;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span>
+        <span class="s">&quot;dict_areaperil&quot;</span><span class="p">:</span><span class="s">&quot;AreaPerilDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_damagebin&quot;</span><span class="p">:</span><span class="s">&quot;DamageBinDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_event&quot;</span><span class="p">:</span><span class="s">&quot;EventDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_exposure&quot;</span><span class="p">:</span><span class="s">&quot;ExposureDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_hazardintensitybin&quot;</span><span class="p">:</span><span class="s">&quot;HazardIntensityBinDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_vuln&quot;</span><span class="p">:</span><span class="s">&quot;VulnDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;exposures_instance&quot;</span><span class="p">:</span><span class="s">&quot;ExposureInstance&quot;</span><span class="p">,</span>
+        <span class="s">&quot;exposures_main&quot;</span><span class="p">:</span><span class="s">&quot;ExposureVersion&quot;</span><span class="p">,</span>
+        <span class="s">&quot;version_hazfp&quot;</span><span class="p">:</span><span class="s">&quot;HazFPVersion&quot;</span><span class="p">,</span>
+        <span class="s">&quot;version_vuln&quot;</span><span class="p">:</span><span class="s">&quot;VulnVersion&quot;</span><span class="p">,</span>
+        <span class="s">&quot;vuln_instance&quot;</span><span class="p">:</span><span class="s">&quot;VulnInstance&quot;</span><span class="p">,</span>
+        <span class="s">&quot;hazfp_instance&quot;</span><span class="p">:</span><span class="s">&quot;HazFPInstance&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">pub_user</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initiating instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            base_url (str): server&#39;s domain name and/or port (without final slash).</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">=</span> <span class="n">base_url</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span> <span class="o">=</span> <span class="n">pub_user</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_logged_in</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cookies</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="c"># Each instance with have it&#39;s own data_dict</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="SpittalBase.do_request"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_request">[docs]</a>    <span class="k">def</span> <span class="nf">do_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">in_data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">in_file_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Makes a post request.</span>
+
+<span class="sd">        Also automatically passes self.cookies to the post request.</span>
+<span class="sd">        This authenticates each request.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            url (str): the url to make a post request to.</span>
+<span class="sd">            in_data (dict): optional, used if data needs to be passed.</span>
+<span class="sd">            in_file_dict (dict): optional, passes file dict to server.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url_string</span><span class="o">=</span><span class="n">url</span>
+        <span class="n">response</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+            <span class="n">url_string</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">in_data</span><span class="p">,</span>
+            <span class="n">files</span><span class="o">=</span><span class="n">in_file_dict</span><span class="p">,</span>
+            <span class="n">cookies</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cookies</span>  <span class="c">#For Authentication!</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.do_login"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_login">[docs]</a>    <span class="k">def</span> <span class="nf">do_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Logs into Oasis Django mid-tier.</span>
+
+<span class="sd">        Also, set self.cookies to the return session ID.</span>
+<span class="sd">        This allows for future authentication.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            password (str): server Djanger user password.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Creating JSON string with authentication credentails.</span>
+        <span class="n">in_data</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;{{ &quot;username&quot;:&quot;{username}&quot;,&#39;</span>
+                    <span class="s">&#39;&quot;password&quot;:&quot;{password}&quot; }}&#39;</span>
+                    <span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">username</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+                    <span class="n">password</span><span class="o">=</span><span class="n">password</span>
+        <span class="p">)</span>
+
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s">&quot;/oasis/login&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">in_data</span><span class="p">)</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">json_response</span><span class="p">[</span><span class="s">&quot;success&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;Invalid user id or password&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cookies</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sessionid</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">[</span><span class="s">&#39;sessionid&#39;</span><span class="p">])</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;You are logged into Mid-tier&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s">&#39;Log in response &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.create_file_upload"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_file_upload">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
+                            <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a file upload object and returns the ID</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            upload_filename (str): what the filename will be on the server.</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: file upload id.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">up_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createFileUpload/&quot;</span> <span class="o">+</span>
+            <span class="n">pub_user</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">upload_filename</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="n">up_id</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">up_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">up_id</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.create_file_download"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_file_download">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
+                            <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a file download object and returns the ID</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            upload_filename (str): not to sure where this name is actually used.</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            int: file download id</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">down_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createFileDownload/&quot;</span> <span class="o">+</span>
+            <span class="n">pub_user</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">upload_filename</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="n">down_id</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">down_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">down_id</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.upload_file"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_absolute_filepath</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Uploads a file to the server.</span>
+
+<span class="sd">        Uploads a local file that is renamed on the server side to</span>
+<span class="sd">        the upload_filename argument.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            local_absolute_filepath (str): path to the file we need to upload.</span>
+<span class="sd">            upload_filename (str): the name for the server-side file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="s">&quot;/oasis/doTaskUploadFileHelper/&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">local_absolute_filepath</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">in_file</span> <span class="o">=</span> <span class="n">f</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+                <span class="n">url</span><span class="p">,</span>
+                <span class="n">in_file_dict</span><span class="o">=</span><span class="p">{</span><span class="n">upload_filename</span><span class="p">:</span><span class="n">in_file</span><span class="p">}</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.create_timestamps"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_timestamps">[docs]</a>    <span class="k">def</span> <span class="nf">create_timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create timestamp for destination files</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            str: a timestamnp of the current time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">str_now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y%m</span><span class="si">%d</span><span class="s">_%H%M%S_&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">str_now</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.check_status"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.check_status">[docs]</a>    <span class="k">def</span> <span class="nf">check_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">config_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the status of the respective job.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            job_id (str): id of the job to check status of.</span>
+<span class="sd">            config_id (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/statusAsync/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">config_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">job_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.do_task"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_task">[docs]</a>    <span class="k">def</span> <span class="nf">do_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">sys_config</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a task on the job queue.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            task_type (str): type of task to be added to the queue.</span>
+<span class="sd">            upload_id (int): upload_id of the file to create task for.</span>
+<span class="sd">            sys_config (int): defines where and how to load the data.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/doTask&quot;</span> <span class="o">+</span> <span class="n">task_type</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">sys_config</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.create_dict"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_dict">[docs]</a>    <span class="k">def</span> <span class="nf">create_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">download_id</span><span class="p">,</span>
+                    <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a dict with the upload and download IDs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dict_type (str): defines the type of dictionary to upload.</span>
+<span class="sd">            upload_id (int): the id returned from create_file_upload().</span>
+<span class="sd">            download_id (int): the id returned from create_file_download().</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/create&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">dict_type</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">pub_user</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">download_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+</div>
+<div class="viewcode-block" id="SpittalBase.upload_directory"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.upload_directory">[docs]</a>    <span class="k">def</span> <span class="nf">upload_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">do_timestamps</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                        <span class="n">module_supplier_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Upload an entire directory of files.</span>
+
+<span class="sd">        In order to achieve this I created a file naming convention.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            directory_path (str): path to the directory to upload from.</span>
+<span class="sd">            do_timestamps (bool): optional, timestamps files or not?</span>
+<span class="sd">            module_supplier_id (int): overall module supplier for uploading.</span>
+<span class="sd">            pkey (int): UNKNOWN</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># The data_dict stores all the information on uploaded files</span>
+        <span class="c"># and there respective structures.</span>
+        <span class="c"># TODO: Think of a better name for the data_dict.</span>
+        <span class="n">files_to_upload</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">directory_path</span> <span class="o">+</span> <span class="s">&quot;*&quot;</span><span class="p">)</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_timestamps</span><span class="p">()</span>
+        <span class="c"># For all files in directory.</span>
+        <span class="k">for</span> <span class="n">pathname</span> <span class="ow">in</span> <span class="n">files_to_upload</span><span class="p">:</span>
+            <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+            <span class="c"># Timestamp files if nessecary.</span>
+            <span class="k">if</span> <span class="n">do_timestamps</span><span class="p">:</span>
+                <span class="n">upload_filename</span> <span class="o">=</span> <span class="n">timestamp</span> <span class="o">+</span> <span class="n">filename</span>
+
+
+            <span class="c"># Create the file upload and get ID.</span>
+            <span class="n">up_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_upload</span><span class="p">(</span>
+                <span class="n">upload_filename</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+                <span class="n">module_supplier_id</span>
+            <span class="p">)</span>
+
+            <span class="c"># Create the file download and get ID.</span>
+            <span class="n">down_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_download</span><span class="p">(</span>
+                <span class="n">upload_filename</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+                <span class="n">module_supplier_id</span>
+            <span class="p">)</span>
+
+            <span class="c"># Actually upload the file to the server.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
+                <span class="n">pathname</span><span class="p">,</span>
+                <span class="n">upload_filename</span>
+            <span class="p">)</span>
+
+            <span class="c"># Split the &#39;.&#39;s as well cause they are file extensions.</span>
+            <span class="n">splitname</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">data_name</span> <span class="o">=</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c"># Save the data for later use.</span>
+            <span class="c"># Update data_dict.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s">&#39;filepath&#39;</span><span class="p">:</span> <span class="n">pathname</span><span class="p">,</span>
+                <span class="s">&#39;upload_name&#39;</span><span class="p">:</span> <span class="n">upload_filename</span><span class="p">,</span>
+                <span class="s">&#39;upload_id&#39;</span><span class="p">:</span> <span class="n">up_id</span><span class="p">,</span>
+                <span class="s">&#39;download_id&#39;</span><span class="p">:</span> <span class="n">down_id</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Uploaded directory&quot;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="SpittalBase.load_models"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.load_models">[docs]</a>    <span class="k">def</span> <span class="nf">load_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Do tasks, load up models.</span>
+
+<span class="sd">        Adds all the tasks in the data_dict to the job queue.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Loading {name} data&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="c"># An exclude for correlations. Isn&#39;t created nor has an ID.</span>
+            <span class="k">if</span> <span class="n">type_name</span> <span class="o">==</span> <span class="s">&quot;correlations_main&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">task_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_task</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">type_name</span><span class="p">],</span>
+                <span class="n">type_</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">type_name</span><span class="p">][</span><span class="s">&#39;job_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+                <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
+            <span class="p">)[</span><span class="s">&#39;JobId&#39;</span><span class="p">]</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s">&#39;Load {name} response: &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">type_name</span><span class="p">)</span> <span class="o">+</span>
+                <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
+            <span class="p">)</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Loaded model&quot;</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

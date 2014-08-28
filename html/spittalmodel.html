@@ -25,7 +25,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="spitttalpond 0.1 documentation" href="index.html" />
     <link rel="next" title="Spittal Exposure" href="spittalexposure.html" />
-    <link rel="prev" title="Welcome to spitttalpond’s documentation!" href="index.html" /> 
+    <link rel="prev" title="spittalbase module" href="spittalbase.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,10 +35,13 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="spittalexposure.html" title="Spittal Exposure"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to spitttalpond’s documentation!"
+          <a href="spittalbase.html" title="spittalbase module"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -59,34 +62,51 @@
 <dt id="spittalmodel.SpittalModel.create_model_structures">
 <tt class="descname">create_model_structures</tt><big>(</big><em>module_supplier_id=1</em><big>)</big><a class="reference internal" href="_modules/spittalmodel.html#SpittalModel.create_model_structures"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalmodel.SpittalModel.create_model_structures" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates supporting module structure from the data_dict.</p>
-<p>Keyword arguments:
-module_supplier_id &#8211; id of the module that supplies the</p>
-<blockquote>
-<div>python and SQL code for this file.
-See /oasis/django/oasis/app/scripts/Dict</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="spittalmodel.SpittalModel.create_version">
 <tt class="descname">create_version</tt><big>(</big><em>version_type</em>, <em>upload_id</em>, <em>pkey</em>, <em>pub_user</em>, <em>module_supplier_id</em><big>)</big><a class="reference internal" href="_modules/spittalmodel.html#SpittalModel.create_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalmodel.SpittalModel.create_version" title="Permalink to this definition">¶</a></dt>
 <dd><p>Creates a version with the upload and download IDs.</p>
-<p>Keyword arguments:
-version_type &#8211; defines the type of version to upload.
-upload_id &#8211; the id returned from create_file_upload().
-pkey &#8211; UNKONW
-pub_usr &#8211; the public user used to name certain things.
-module_supplier_id &#8211; id of the module that supplies the</p>
-<blockquote>
-<div>python and SQL code for this file.
-See /oasis/django/oasis/app/scripts/Dict</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>version_type</strong> (<em>str</em>) &#8211; defines the type of version to upload.</li>
+<li><strong>upload_id</strong> (<em>int</em>) &#8211; the id returned from create_file_upload().</li>
+<li><strong>pkey</strong> (<em>int</em>) &#8211; UNKONW</li>
+<li><strong>pub_usr</strong> (<em>str</em>) &#8211; the public user used to name certain things.</li>
+<li><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="spittalmodel.SpittalModel.get_model">
 <tt class="descname">get_model</tt><big>(</big><em>model_name</em><big>)</big><a class="reference internal" href="_modules/spittalmodel.html#SpittalModel.get_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalmodel.SpittalModel.get_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a previously uploaded model from the database.</p>
-<p>Keyword arguments:
-model_name &#8211; The name that the model was uploaded with.</p>
 </dd></dl>
 
 </dd></dl>
@@ -100,8 +120,8 @@ model_name &#8211; The name that the model was uploaded with.</p>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to spitttalpond&#8217;s documentation!</a></p>
+  <p class="topless"><a href="spittalbase.html"
+                        title="previous chapter">spittalbase module</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="spittalexposure.html"
                         title="next chapter">Spittal Exposure</a></p>
@@ -134,10 +154,13 @@ model_name &#8211; The name that the model was uploaded with.</p>
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="spittalexposure.html" title="Spittal Exposure"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to spitttalpond’s documentation!"
+          <a href="spittalbase.html" title="spittalbase module"
              >previous</a> |</li>
         <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
       </ul>

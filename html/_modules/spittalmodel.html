@@ -33,6 +33,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
@@ -57,14 +60,17 @@
                        <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a version with the upload and download IDs.</span>
 
-<span class="sd">        Keyword arguments:</span>
-<span class="sd">        version_type -- defines the type of version to upload.</span>
-<span class="sd">        upload_id -- the id returned from create_file_upload().</span>
-<span class="sd">        pkey -- UNKONW</span>
-<span class="sd">        pub_usr -- the public user used to name certain things.</span>
-<span class="sd">        module_supplier_id -- id of the module that supplies the</span>
-<span class="sd">                              python and SQL code for this file.</span>
-<span class="sd">                              See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            version_type (str): defines the type of version to upload.</span>
+<span class="sd">            upload_id (int): the id returned from create_file_upload().</span>
+<span class="sd">            pkey (int): UNKONW</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
@@ -79,10 +85,10 @@
 <div class="viewcode-block" id="SpittalModel.create_model_structures"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel.create_model_structures">[docs]</a>    <span class="k">def</span> <span class="nf">create_model_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates supporting module structure from the data_dict.</span>
 
-<span class="sd">        Keyword arguments:</span>
-<span class="sd">        module_supplier_id -- id of the module that supplies the</span>
-<span class="sd">                              python and SQL code for this file.</span>
-<span class="sd">                              See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">        Args:</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c">##### Create the Model Structures ####</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Creating the model structures.&#39;</span><span class="p">)</span>
@@ -128,8 +134,8 @@
 <div class="viewcode-block" id="SpittalModel.get_model"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a previously uploaded model from the database.</span>
 
-<span class="sd">        Keyword arguments:</span>
-<span class="sd">        model_name -- The name that the model was uploaded with.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            model_name -- The name that the model was uploaded with.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span></div></div>
 </pre></div>
@@ -162,6 +168,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Module code</a> &raquo;</li> 
       </ul>
