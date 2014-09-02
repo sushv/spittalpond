@@ -15,6 +15,7 @@ Contents:
     spittalbase.rst
     spittalmodel.rst
     spittalexposure.rst
+    spittalrun.rst
 
 Indices and tables
 ==================

@@ -11,6 +11,16 @@ class SpittalRun(SpittalBase):
     """
 
     def create_cdf(self, name, benchmark_id, exposure_instance_id):
+        """ Creates the CDF Django object.
+
+        Args:
+            name (str): UNKNOWN, assuming just a user-friendly name.
+            benchmark_id (int): the id returned from create_benchmark().
+            exposure_instance_id (int): id returned from create_exposure_instance().
+
+        Returns:
+            HttpResponse: server's response.
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createCDF/" +
@@ -21,6 +31,18 @@ class SpittalRun(SpittalBase):
         return response
 
     def create_cdf_samples(self, name, cdf_id, number_of_samples, sample_type):
+        """ Create the CDF samples Django object.
+
+        Args:
+            name (str): UNKNOWN, assuming just a user-friendly name.
+            cdf_id (int): id returned from create_cdf()
+            number_of_samples(int): number of cdf samples to create.
+            sample_type (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
+        """
+
         response = self.do_request(
             self.base_url +
             "/oasis/createCDFSamples/" +
@@ -32,6 +54,17 @@ class SpittalRun(SpittalBase):
         return response
 
     def create_gul(self, name, cdf_samples_id, loss_threshhold=0):
+        """ Creates the ground up loss.
+
+        Args:
+            name (str): UNKNOWN, assuming just a user-friendly name.
+            cdf_samples_id (int): id returned from create_cdf_samples().
+            loss_threshhold (int): UNKNOWN
+
+        Returns:
+            HttpResponse: server's response.
+        """
+
         response = self.do_request(
             self.base_url +
             "/oasis/createGUL/" +
@@ -41,18 +74,17 @@ class SpittalRun(SpittalBase):
         )
         return response
 
-    def create_file_download(self, name, filename, module_supplier_id):
-        response = self.do_request(
-            self.base_url +
-            "/oasis/createFileDownload/" +
-            name + "/" +
-            filename + "/" +
-            str(module_supplier_id) + "/"
-        )
-        return response
-
     def create_pub_gul(self, name, gul_id, download_file_id):
-        """ Create the publish ground up loss. """
+        """ Create the publish ground up loss.
+
+        Args:
+            name (str): UNKNOWN, assuming just a user-friendly name.
+            gul_id (int): id returned from create_gul().
+            download_file_id: id returned from create_file_download().
+
+        Returns:
+            HttpResponse: server's response.
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/createPubGUL/" +
@@ -63,6 +95,19 @@ class SpittalRun(SpittalBase):
         return response
 
     def update_file_download(self, id, name, module_supplier_id, filename):
+        """ Much like the create_file_download method but instead updates.
+
+        Args:
+            id (int): id returned from create_file_download.
+            name (str): UNKNOWN, assuming just a user-friendly name.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+            filename (str): name of the new file download.
+
+        Returns:
+            HttpResponse: server's response.
+        """
         response = self.do_request(
             self.base_url +
             "/oasis/updateFileDownload/" +
@@ -74,9 +119,19 @@ class SpittalRun(SpittalBase):
         return response
 
 
-
     def create_gul_data(self, gul_name, benchmark_id, exposure_instance):
+        """ Create the ground up loss data based on our exposure instance.
 
+        Args:
+            gul_name (str): the user friendly name of the gul to create
+            benchmark_id (int): the id returned from create_benchmark().
+            exposure_instance_id (int): id returned from create_exposure_instance().
+
+        Returns:
+            HttpResponse: server's response.
+        """
+
+        # Create the cdf Django kernel object.
         self.data_dict['kernel_cdf'] = {}
         resp = self.create_cdf(gul_name, benchmark_id, exposure_instance)
         logger.info('Create cdf response: ' + resp.content)
@@ -85,7 +140,7 @@ class SpittalRun(SpittalBase):
             resp.content
         )['id']
 
-
+        # Create the cdf_samples Django kernel object.
         self.data_dict['kernel_cdfsamples'] = {}
         resp = self.create_cdf_samples(
             gul_name,
@@ -100,6 +155,7 @@ class SpittalRun(SpittalBase):
         )['id']
 
 
+        # Create the GUL Django kernel object.
         self.data_dict['kernel_gul'] = {}
         resp = self.create_gul(gul_name,
             self.data_dict['kernel_cdfsamples']['id'],
@@ -114,12 +170,25 @@ class SpittalRun(SpittalBase):
         print("Created GUL data")
 
     def get_gul_data(self, gul_name, filename, module_supplier_id):
-        """ Get the GUL data from the server. """
+        """ Get the GUL data from the server.
 
+        Args:
+            gul_name (str): The user friendly name of the GUL to create
+            filename (str): the name of file to create and download.
+            module_supplier_id (int): id of the module that supplies the
+                python and SQL code for this file.
+                See /oasis/django/oasis/app/scripts/Dict
+
+        Returns:
+            HttpResponse: server's response.
+            This response also contains all the data from the GUL creation.
+        """
+
+        # Create a new file download.
         self.data_dict['kernel_pubgul'] = {}
         resp = self.create_file_download(
-            self.pub_user,
             filename,
+            self.pub_user,
             module_supplier_id
         )
         logger.info('Create kernel GUL file download response, ' + resp.content)
@@ -127,6 +196,7 @@ class SpittalRun(SpittalBase):
             resp.content
         )['id']
 
+        # Create the publish GUL.
         resp = self.create_pub_gul(
             gul_name,
             self.data_dict['kernel_gul']['id'],
@@ -138,6 +208,7 @@ class SpittalRun(SpittalBase):
             resp.content
         )['id']
 
+        # Update the file download.
         self.update_file_download(
             self.data_dict['kernel_pubgul']['download_id'],
             filename,
@@ -153,6 +224,7 @@ class SpittalRun(SpittalBase):
         # This has to be done like at the very last!!
         self.load_models()
 
+        # A makeshift save of the data.
         response1 = self.do_request(
             self.base_url +
             "/oasis/saveFilePubGUL/" +
@@ -160,9 +232,17 @@ class SpittalRun(SpittalBase):
             str(self.data_dict['kernel_pubgul']['id']) + "/"
         )
         logger.info("Save pub GUL response " + response1.content)
+
+        # TODO: CLEAN UP THIS HERE MESS.
+        # Since the save file pub GUL takes time to finish
+        # We must wait for it to save the file.
         import time
         time.sleep(4)
+
+        # Reload everything again.
         self.load_models()
+
+        # Actually download the file.
         resp = self.download_file(
             self.data_dict['kernel_pubgul']['download_id']
         )
