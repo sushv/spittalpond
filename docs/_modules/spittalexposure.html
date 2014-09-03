@@ -1,0 +1,334 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spittalexposure &mdash; spitttalpond 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for spittalexposure</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">spittalbase</span> <span class="kn">import</span> <span class="n">SpittalBase</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;spittalpond&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpittalExposure"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure">[docs]</a><span class="k">class</span> <span class="nc">SpittalExposure</span><span class="p">(</span><span class="n">SpittalBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Handles everything exposure related.</span>
+
+<span class="sd">    Mainly used for creating exposure instances for a specified model.</span>
+<span class="sd">    Also, can create a benchmark for an exposure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SpittalExposure.create_exposure_version"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_exposure_version">[docs]</a>    <span class="k">def</span> <span class="nf">create_exposure_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">,</span>
+                                <span class="n">upload_id</span><span class="p">,</span> <span class="n">correlation_upload_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a new exposure version</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pname (str): UNKNOWN, assuming just a user-friendly name.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">            upload_id (int): the id returned from create_file_upload().</span>
+<span class="sd">            correlation_upload_id (int): id returned from the correlation file.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createExposureVersion/&quot;</span> <span class="o">+</span>
+            <span class="n">pname</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">correlation_upload_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s">&#39;Create_exposure_version response &#39;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalExposure.create_exposure_instance"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_exposure_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_exposure_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">,</span> <span class="n">exposure_version_id</span><span class="p">,</span>
+                                <span class="n">exposure_dict_id</span><span class="p">,</span> <span class="n">area_peril_dict_id</span><span class="p">,</span>
+                                <span class="n">vuln_dict_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates an instance of the exposure data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pname (str): UNKNOWN, assuming just a user-friendly name.</span>
+<span class="sd">            exposure_version_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            exposure_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            area_peril_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            vuln_dict_id (int): id returned by the respective do_task() method.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createExposureInstance/&quot;</span> <span class="o">+</span>
+            <span class="n">pname</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">exposure_version_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">exposure_dict_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">area_peril_dict_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">vuln_dict_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalExposure.create_hazfp_instance"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_hazfp_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_hazfp_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">,</span> <span class="n">hazfp_version_id</span><span class="p">,</span>
+                                <span class="n">event_dict_id</span><span class="p">,</span> <span class="n">area_peril_dict_id</span><span class="p">,</span>
+                                <span class="n">hazard_intensity_bin_id</span><span class="p">,</span> <span class="n">pkey</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates an instance of the hazfp data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pname (str): UNKNOWN, assuming just a user-friendly name.</span>
+<span class="sd">            hazfp_version_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            event_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            area_peril_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            hazard_intensity_bin_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            pkey (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createHazFPInstance/&quot;</span> <span class="o">+</span>
+            <span class="n">pname</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">hazfp_version_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">event_dict_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">area_peril_dict_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">hazard_intensity_bin_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">pkey</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalExposure.create_vuln_instance"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_vuln_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_vuln_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pname</span><span class="p">,</span> <span class="n">vuln_version_id</span><span class="p">,</span> <span class="n">vuln_dict_id</span><span class="p">,</span>
+                                <span class="n">hazard_intensity_bin_dict_id</span><span class="p">,</span>
+                                <span class="n">damage_bin_dict_id</span><span class="p">,</span> <span class="n">pkey</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates an instance of the vulnerability data.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            pname (str): UNKNOWN, assuming just a user-friendly name.</span>
+<span class="sd">            vuln_version_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            vuln_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            hazard_intensity_bin_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            damage_bin_dict_id (int): id returned by the respective do_task() method.</span>
+<span class="sd">            pkey (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createVulnInstance/&quot;</span> <span class="o">+</span>
+            <span class="n">pname</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">vuln_version_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">vuln_dict_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">hazard_intensity_bin_dict_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">damage_bin_dict_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">pkey</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="c"># TODO: At the moment this whole method is, more or less, hardcoded.</span>
+    <span class="c"># So it will only run is the 3 specific exposure files are present.</span>
+    <span class="c"># Work on making it more dynamic.</span></div>
+<div class="viewcode-block" id="SpittalExposure.create_exposure_structure"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_exposure_structure">[docs]</a>    <span class="k">def</span> <span class="nf">create_exposure_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_data_dict</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates supporting exposure structure from the data_dict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_data_dict (dict): the model data to build the exposure onto.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Creating the exposure strutuces.&#39;</span><span class="p">)</span>
+        <span class="c"># Upload the lone dictionary.</span>
+        <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dict</span><span class="p">(</span>
+            <span class="s">&quot;dict_exposure&quot;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;dict_exposure&#39;</span><span class="p">][</span><span class="s">&#39;upload_id&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;dict_exposure&#39;</span><span class="p">][</span><span class="s">&#39;download_id&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="n">module_supplier_id</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create dict_exposure response: &#39;</span> <span class="o">+</span> <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;dict_exposure&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c"># The correlations file simply has to be uploaded.</span>
+        <span class="c"># create_exposure_version() will take care of the rest.</span>
+
+        <span class="c"># For now we assume that there is only one exposure version.</span>
+        <span class="c"># so we do not need to loop through.</span>
+        <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_exposure_version</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="n">module_supplier_id</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_main&#39;</span><span class="p">][</span><span class="s">&#39;upload_id&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;correlations_main&#39;</span><span class="p">][</span><span class="s">&#39;upload_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create exposure_verion response: &#39;</span> <span class="o">+</span> <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_main&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c"># Create the exposure instance.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_exposure_instance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_main&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;dict_exposure&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_areaperil&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_vuln&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create exposure_instance response: &#39;</span> <span class="o">+</span> <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c"># Create the hazfp instance.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;hazfp_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_hazfp_instance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;version_hazfp&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_event&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_areaperil&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_hazardintensitybin&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="s">&quot;ModelKey&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create hazfp_verion response: &#39;</span> <span class="o">+</span> <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;hazfp_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="c"># Create vuln instance.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;vuln_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_vuln_instance</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;version_vuln&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_vuln&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_hazardintensitybin&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="n">model_data_dict</span><span class="p">[</span><span class="s">&#39;dict_damagebin&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">],</span>
+            <span class="s">&quot;ModelKey&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create vuln_instance response: &#39;</span> <span class="o">+</span> <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;vuln_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Finished creating exposure structures.&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SpittalExposure.create_benchmark"><a class="viewcode-back" href="../spittalexposure.html#spittalexposure.SpittalExposure.create_benchmark">[docs]</a>    <span class="k">def</span> <span class="nf">create_benchmark</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;Benchmark&quot;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                        <span class="n">min_chunk</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">max_chunk</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a benchmark task based on this exposure.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): the name of the benchmark.</span>
+<span class="sd">            chunk_size (int): the number of simulations to run each chunk.</span>
+<span class="sd">            min_chunk (int): UNKNOWN</span>
+<span class="sd">            max_chunk (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createBenchmark/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;hazfp_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;exposures_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;vuln_instance&#39;</span><span class="p">][</span><span class="s">&#39;id&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">chunk_size</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">min_chunk</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">max_chunk</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spittal Exposure &mdash; spitttalpond 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.1 documentation" href="index.html" />
+    <link rel="next" title="Spittal Run" href="spittalrun.html" />
+    <link rel="prev" title="Spittal Model" href="spittalmodel.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spittalrun.html" title="Spittal Run"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="spittalmodel.html" title="Spittal Model"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="spittal-exposure">
+<h1>Spittal Exposure<a class="headerlink" href="#spittal-exposure" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="spittalexposure.SpittalExposure">
+<em class="property">class </em><tt class="descclassname">spittalexposure.</tt><tt class="descname">SpittalExposure</tt><big>(</big><em>base_url</em>, <em>pub_user</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles everything exposure related.</p>
+<p>Mainly used for creating exposure instances for a specified model.
+Also, can create a benchmark for an exposure.</p>
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_benchmark">
+<tt class="descname">create_benchmark</tt><big>(</big><em>name='Benchmark'</em>, <em>chunk_size=10</em>, <em>min_chunk=4</em>, <em>max_chunk=4</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_benchmark"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_benchmark" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a benchmark task based on this exposure.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; the name of the benchmark.</li>
+<li><strong>chunk_size</strong> (<em>int</em>) &#8211; the number of simulations to run each chunk.</li>
+<li><strong>min_chunk</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+<li><strong>max_chunk</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_exposure_instance">
+<tt class="descname">create_exposure_instance</tt><big>(</big><em>pname</em>, <em>exposure_version_id</em>, <em>exposure_dict_id</em>, <em>area_peril_dict_id</em>, <em>vuln_dict_id</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_exposure_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_exposure_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of the exposure data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pname</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>exposure_version_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>exposure_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>area_peril_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>vuln_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_exposure_structure">
+<tt class="descname">create_exposure_structure</tt><big>(</big><em>model_data_dict</em>, <em>module_supplier_id=1</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_exposure_structure"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_exposure_structure" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates supporting exposure structure from the data_dict.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>model_data_dict</strong> (<em>dict</em>) &#8211; the model data to build the exposure onto.</li>
+<li><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_exposure_version">
+<tt class="descname">create_exposure_version</tt><big>(</big><em>pname</em>, <em>module_supplier_id</em>, <em>upload_id</em>, <em>correlation_upload_id</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_exposure_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_exposure_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a new exposure version</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pname</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</li>
+<li><strong>upload_id</strong> (<em>int</em>) &#8211; the id returned from create_file_upload().</li>
+<li><strong>correlation_upload_id</strong> (<em>int</em>) &#8211; id returned from the correlation file.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_hazfp_instance">
+<tt class="descname">create_hazfp_instance</tt><big>(</big><em>pname</em>, <em>hazfp_version_id</em>, <em>event_dict_id</em>, <em>area_peril_dict_id</em>, <em>hazard_intensity_bin_id</em>, <em>pkey</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_hazfp_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_hazfp_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of the hazfp data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pname</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>hazfp_version_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>event_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>area_peril_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>hazard_intensity_bin_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>pkey</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalexposure.SpittalExposure.create_vuln_instance">
+<tt class="descname">create_vuln_instance</tt><big>(</big><em>pname</em>, <em>vuln_version_id</em>, <em>vuln_dict_id</em>, <em>hazard_intensity_bin_dict_id</em>, <em>damage_bin_dict_id</em>, <em>pkey</em><big>)</big><a class="reference internal" href="_modules/spittalexposure.html#SpittalExposure.create_vuln_instance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalexposure.SpittalExposure.create_vuln_instance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an instance of the vulnerability data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>pname</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>vuln_version_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>vuln_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>hazard_intensity_bin_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>damage_bin_dict_id</strong> (<em>int</em>) &#8211; id returned by the respective do_task() method.</li>
+<li><strong>pkey</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spittalmodel.html"
+                        title="previous chapter">Spittal Model</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="spittalrun.html"
+                        title="next chapter">Spittal Run</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/spittalexposure.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spittalrun.html" title="Spittal Run"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="spittalmodel.html" title="Spittal Model"
+             >previous</a> |</li>
+        <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

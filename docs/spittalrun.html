@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Spittal Run &mdash; spitttalpond 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.1 documentation" href="index.html" />
+    <link rel="prev" title="Spittal Exposure" href="spittalexposure.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spittalexposure.html" title="Spittal Exposure"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-spittalrun">
+<span id="spittal-run"></span><h1>Spittal Run<a class="headerlink" href="#module-spittalrun" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="spittalrun.SpittalRun">
+<em class="property">class </em><tt class="descclassname">spittalrun.</tt><tt class="descname">SpittalRun</tt><big>(</big><em>base_url</em>, <em>pub_user</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles everything related to running the data processs</p>
+<p>This is where all of the data and .csv files are created.</p>
+<dl class="method">
+<dt id="spittalrun.SpittalRun.create_cdf">
+<tt class="descname">create_cdf</tt><big>(</big><em>name</em>, <em>benchmark_id</em>, <em>exposure_instance_id</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.create_cdf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.create_cdf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the CDF Django object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>benchmark_id</strong> (<em>int</em>) &#8211; the id returned from create_benchmark().</li>
+<li><strong>exposure_instance_id</strong> (<em>int</em>) &#8211; id returned from create_exposure_instance().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.create_cdf_samples">
+<tt class="descname">create_cdf_samples</tt><big>(</big><em>name</em>, <em>cdf_id</em>, <em>number_of_samples</em>, <em>sample_type</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.create_cdf_samples"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.create_cdf_samples" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the CDF samples Django object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>cdf_id</strong> (<em>int</em>) &#8211; id returned from create_cdf()</li>
+<li><strong>number_of_samples</strong> (<em>int</em>) &#8211; number of cdf samples to create.</li>
+<li><strong>sample_type</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.create_gul">
+<tt class="descname">create_gul</tt><big>(</big><em>name</em>, <em>cdf_samples_id</em>, <em>loss_threshhold=0</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.create_gul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.create_gul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the ground up loss.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>cdf_samples_id</strong> (<em>int</em>) &#8211; id returned from create_cdf_samples().</li>
+<li><strong>loss_threshhold</strong> (<em>int</em>) &#8211; UNKNOWN</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.create_gul_data">
+<tt class="descname">create_gul_data</tt><big>(</big><em>gul_name</em>, <em>benchmark_id</em>, <em>exposure_instance</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.create_gul_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.create_gul_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the ground up loss data based on our exposure instance.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gul_name</strong> (<em>str</em>) &#8211; the user friendly name of the gul to create</li>
+<li><strong>benchmark_id</strong> (<em>int</em>) &#8211; the id returned from create_benchmark().</li>
+<li><strong>exposure_instance_id</strong> (<em>int</em>) &#8211; id returned from create_exposure_instance().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.create_pub_gul">
+<tt class="descname">create_pub_gul</tt><big>(</big><em>name</em>, <em>gul_id</em>, <em>download_file_id</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.create_pub_gul"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.create_pub_gul" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the publish ground up loss.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>name</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>gul_id</strong> (<em>int</em>) &#8211; id returned from create_gul().</li>
+<li><strong>download_file_id</strong> &#8211; id returned from create_file_download().</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.get_gul_data">
+<tt class="descname">get_gul_data</tt><big>(</big><em>gul_name</em>, <em>filename</em>, <em>module_supplier_id</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.get_gul_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.get_gul_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the GUL data from the server.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>gul_name</strong> (<em>str</em>) &#8211; The user friendly name of the GUL to create</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; the name of file to create and download.</li>
+<li><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.
+This response also contains all the data from the GUL creation.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="spittalrun.SpittalRun.update_file_download">
+<tt class="descname">update_file_download</tt><big>(</big><em>id</em>, <em>name</em>, <em>module_supplier_id</em>, <em>filename</em><big>)</big><a class="reference internal" href="_modules/spittalrun.html#SpittalRun.update_file_download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#spittalrun.SpittalRun.update_file_download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Much like the create_file_download method but instead updates.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>id</strong> (<em>int</em>) &#8211; id returned from create_file_download.</li>
+<li><strong>name</strong> (<em>str</em>) &#8211; UNKNOWN, assuming just a user-friendly name.</li>
+<li><strong>module_supplier_id</strong> (<em>int</em>) &#8211; id of the module that supplies the
+python and SQL code for this file.
+See /oasis/django/oasis/app/scripts/Dict</li>
+<li><strong>filename</strong> (<em>str</em>) &#8211; name of the new file download.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">server&#8217;s response.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">HttpResponse</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="spittalexposure.html"
+                        title="previous chapter">Spittal Exposure</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/spittalrun.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="spittalexposure.html" title="Spittal Exposure"
+             >previous</a> |</li>
+        <li><a href="index.html">spitttalpond 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

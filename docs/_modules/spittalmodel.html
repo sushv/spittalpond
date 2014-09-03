@@ -1,0 +1,183 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spittalmodel &mdash; spitttalpond 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.1 documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for spittalmodel</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">spittalbase</span> <span class="kn">import</span> <span class="n">SpittalBase</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;spittalpond&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpittalModel"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel">[docs]</a><span class="k">class</span> <span class="nc">SpittalModel</span><span class="p">(</span><span class="n">SpittalBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Handles everything model related. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SpittalModel.create_version"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel.create_version">[docs]</a>    <span class="k">def</span> <span class="nf">create_version</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">version_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">pkey</span><span class="p">,</span>
+                       <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a version with the upload and download IDs.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            version_type (str): defines the type of version to upload.</span>
+<span class="sd">            upload_id (int): the id returned from create_file_upload().</span>
+<span class="sd">            pkey (int): UNKONW</span>
+<span class="sd">            pub_usr (str): the public user used to name certain things.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/create&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">version_type</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">pub_user</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">upload_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">pkey</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalModel.create_model_structures"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel.create_model_structures">[docs]</a>    <span class="k">def</span> <span class="nf">create_model_structures</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates supporting module structure from the data_dict.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c">##### Create the Model Structures ####</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Creating the model structures.&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">type_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="n">splitname</span> <span class="o">=</span> <span class="n">type_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+            <span class="c"># For dictionary types.</span>
+            <span class="k">if</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;dict&#39;</span><span class="p">:</span>
+                <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_dict</span><span class="p">(</span>
+                    <span class="n">type_name</span><span class="p">,</span>
+                    <span class="n">type_</span><span class="p">[</span><span class="s">&#39;upload_id&#39;</span><span class="p">],</span>
+                    <span class="n">type_</span><span class="p">[</span><span class="s">&#39;download_id&#39;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+                    <span class="n">module_supplier_id</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s">&#39;Create dict {dict_} response: &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dict_</span><span class="o">=</span><span class="n">type_name</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">type_</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+            <span class="c"># For version types.</span>
+            <span class="k">elif</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;version&#39;</span><span class="p">:</span>
+                <span class="n">creation_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_version</span><span class="p">(</span>
+                    <span class="n">type_name</span><span class="p">,</span>
+                    <span class="n">type_</span><span class="p">[</span><span class="s">&#39;upload_id&#39;</span><span class="p">],</span>
+                    <span class="n">type_</span><span class="p">[</span><span class="s">&#39;download_id&#39;</span><span class="p">],</span>
+                    <span class="s">&quot;ModelKey&quot;</span><span class="p">,</span> <span class="c"># What is this?!</span>
+                    <span class="n">module_supplier_id</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="s">&#39;Create version {version} response: &#39;</span>
+                    <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><span class="n">type_name</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">creation_response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="p">)</span>
+
+                <span class="n">type_</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+                    <span class="n">creation_response</span><span class="o">.</span><span class="n">content</span>
+                <span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&#39;Finished creating model strutures.&#39;</span><span class="p">)</span>
+
+    <span class="c"># TODO: Finish creating this method.</span></div>
+<div class="viewcode-block" id="SpittalModel.get_model"><a class="viewcode-back" href="../spittalmodel.html#spittalmodel.SpittalModel.get_model">[docs]</a>    <span class="k">def</span> <span class="nf">get_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return a previously uploaded model from the database.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model_name -- The name that the model was uploaded with.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
