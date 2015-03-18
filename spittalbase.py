@@ -61,7 +61,8 @@ class SpittalBase():
         This authenticates each request.
 
         Args:
-            url (str): the url to make a post request to.
+            url (str): the url to make a post request to. Ensureu that you
+                specify a schema i.e. http://, ftp:// etc...
             in_data (dict): optional, used if data needs to be passed.
             in_file_dict (dict): optional, passes file dict to server.
 
