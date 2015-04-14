@@ -10,7 +10,8 @@ class SpittalPond():
     to the Oasis mid-tier Django API.
     """
 
-    def __init__(self, base_url, pub_user, log_file='/var/tmp/logger.log'):
+    def __init__(self, base_url, pub_user,
+                 log_file='/var/tmp/logger.log', log_level=logging.INFO):
         # Initiating our sub classes
         logger = logging.getLogger('spittalpond')
         logger.propagate = False
@@ -18,7 +19,7 @@ class SpittalPond():
         formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
         handler.setFormatter(formatter)
         logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
+        logger.setLevel(log_level)
 
         logger.info('Initating new spittalpond instance.')
 

@@ -18,6 +18,8 @@ class SpittalBase():
     # Each subclass only really needs to know about itself.
     # TODO: fix the naming of instance here.
     # The instance suffix shoudl come first.
+    # Also, Should be version_exposure _not_ exposure_main.
+    # And correlations main it's looking pretty.
     types = {
         # correlations is special, it's just a file, that's all!
         "correlations_main":None,
@@ -27,17 +29,19 @@ class SpittalBase():
         "dict_exposure":"ExposureDict",
         "dict_hazardintensitybin":"HazardIntensityBinDict",
         "dict_vuln":"VulnDict",
+        "dict_random":"RandomNumberTable",
         "exposures_instance":"ExposureInstance",
         "exposures_main":"ExposureVersion",
         "version_hazfp":"HazFPVersion",
         "version_vuln":"VulnVersion",
+        "version_random": "RandomNumberTableVersion",
         "vuln_instance":"VulnInstance",
         "hazfp_instance":"HazFPInstance",
+        "random_instance":"RandomNumberTableInstance",
         "kernel_cdf":"CDF",
         "kernel_cdfsamples":"CDFSamples",
         "kernel_gul":"GUL",
-		"kernel_pubgul": "PubGUL",
-
+        "kernel_pubgul": "PubGUL",
     }
 
     def __init__(self, base_url, pub_user):
@@ -70,6 +74,9 @@ class SpittalBase():
             HttpResponse: server's response
         """
         url_string=url
+        logger.debug(
+            "do_request request string: {string}".format(string=url_string)
+        )
         response=requests.post(
             url_string,
             data=in_data,
@@ -128,7 +135,10 @@ class SpittalBase():
             upload_filename + "/" +
             str(module_supplier_id) + "/"
         )
-        up_id = json.loads(up_response.content)['id']
+        logger.debug("createFileUpload respons: {resp}".format(
+            resp=up_response.content
+        ))
+        up_id = int(json.loads(up_response.content)['taskId'])
         return up_id
 
     def create_file_download(self, upload_filename,
@@ -152,7 +162,12 @@ class SpittalBase():
             upload_filename + "/" +
             str(module_supplier_id) + "/"
         )
-        down_id = json.loads(down_response.content)['id']
+        logger.debug(
+            "createFileDownload respons: {resp}".format(
+                resp=down_response.content
+            )
+        )
+        down_id = int(json.loads(down_response.content)['taskId'])
         return down_id
 
     def upload_file(self, local_absolute_filepath, upload_filename):
@@ -182,7 +197,7 @@ class SpittalBase():
         response = self.do_request(
             self.base_url +
             "/oasis/doTaskDownloadFileHelper/" +
-            download_id + "/"
+            str(download_id) + "/"
         )
         return response
 
@@ -261,11 +276,26 @@ class SpittalBase():
         return response
 
 
-    def upload_directory(self, directory_path, do_timestamps=True,
-                        module_supplier_id=1, pkey=1):
+    def upload_directory(self, directory_path, do_timestamps=True, pkey=1):
         """ Upload an entire directory of files.
 
         In order to achieve this I created a file naming convention.
+        This naming convention splits the name into three parts separated
+        by underscores and appended with a .csv extension:
+            1. The file's type. Either dictionary or version corresponding
+                to it's Oasis profile type.
+            2. The specific name below the type. Must be any of the below:
+                - areaperil
+                - damagebin
+                - event
+                - exposure
+                - hazardintensitybin
+                - vuln
+                - hazfp
+            3. Lastely, for now, the module supplier will be hard coded into
+                 the name of each file. Really the main reason for this is
+                 because we do not have a config file to specify all of this.
+                 TODO: Create a config file to run everything automatically!
 
         Args:
             directory_path (str): path to the directory to upload from.
@@ -282,6 +312,21 @@ class SpittalBase():
         # For all files in directory.
         for pathname in files_to_upload:
             filename = os.path.basename(pathname)
+
+            # Split the '.'s as well cause they are file extensions.
+            # We just want to get the first two parts of the name.
+            splitname = filename.replace(".", "_").split("_")
+            data_name = splitname[0] + "_" + splitname[1]
+            module_supplier_id = splitname[2]
+
+            assert len(splitname) == 4,\
+                "Bad file name in folder: {filename}".format(filename=filename)
+            assert data_name in self.types.keys(),\
+                    ("File type {filetype} does not have proper type format. "
+                    "Are you sure you spelt it right?").format(
+                            filetype=data_name
+                    )
+
             # Timestamp files if nessecary.
             if do_timestamps:
                 upload_filename = timestamp + filename
@@ -293,6 +338,8 @@ class SpittalBase():
                 self.pub_user,
                 module_supplier_id
             )
+            assert type(up_id) == int,\
+                "Bad upload ID response: Not an integer!"
 
             # Create the file download and get ID.
             down_id = self.create_file_download(
@@ -300,16 +347,14 @@ class SpittalBase():
                 self.pub_user,
                 module_supplier_id
             )
+            assert type(down_id) == int,\
+                "Bad download ID response: Not an integer!"
 
             # Actually upload the file to the server.
             self.upload_file(
                 pathname,
                 upload_filename
             )
-
-            # Split the '.'s as well cause they are file extensions.
-            splitname = filename.replace(".", "_").split("_")
-            data_name = splitname[0] + "_" + splitname[1]
 
             # Save the data for later use.
             # Update data_dict.
@@ -318,6 +363,7 @@ class SpittalBase():
                 'upload_name': upload_filename,
                 'upload_id': up_id,
                 'download_id': down_id,
+                'module_supplier_id': module_supplier_id,
             }
 
         print("Uploaded directory")
@@ -335,7 +381,7 @@ class SpittalBase():
                 continue
             task_response = self.do_task(
                 self.types[type_name],
-                type_['id']
+                type_['taskId']
             )
             self.data_dict[type_name]['job_id'] = json.loads(
                 task_response.content
@@ -346,3 +392,89 @@ class SpittalBase():
             )
 
         print("Loaded model")
+
+
+    # Job related methods below.
+    # TODO: Appropriately name this method.
+    def wait_until_done(self, job_id, config_id=1,
+                            wait_time=5, max_iters=50, init_wait_time=0):
+        """ Waits until the specified job is complete.
+
+        This is used because some jobs depends on others.
+        Therfore we must wait until some jobs are completed.
+
+        Args:
+            job_id (int): ID of the job to wait for.
+            config_id (int, optional): config that the job was created with.
+            wait_time (int, optional): seconds to wait between each check.
+            max_iters (int, optional): max iterations before raising exception.
+            init_wait_time (int, optional): seconds to initially wait.
+
+        Returns:
+            None
+        """
+        status = False
+        i= 0
+        time.sleep(init_wait_time)
+        # Do until job finishes or max iters is reached.
+        while status == False and i < max_iters:
+            resp = self.check_status(job_id, config_id)
+            logger.debug("Waiting for response " + resp.content)
+            job_status = json.loads(resp.content)['status']
+            if job_status == 'done':
+                logger.info("Previous, job done! " + resp.content)
+                status = True
+            # If the job fails stop everything and raise exception.
+            elif job_status == "FAILED":
+                raise Exception(
+                    "FATAL: Job {num} failed with a response of: {resp}".format(
+                        num=job_id,
+                        resp=resp.content
+                    )
+                )
+            i += 1
+            time.sleep(wait_time)
+        # If we hit max iterations.
+        if status == False:
+            raise Exception(
+                "Task Load Timeout!\nTry setting a longer wait time"
+            )
+        # TODO: Maybe report some time stats once done.
+
+
+    # TODO: Rename to queue_all_tasks.
+    def queue_task(self, task_name):
+        """ Simple add the specified task in the job queue.
+
+        This is simple queuing the task only adding it to the queue.
+        As opposed to do the job when we wait for it to complete.
+        """
+        task_response = self.do_task(
+            self.types[task_name],
+            self.data_dict[task_name]['taskId']
+        )
+        self.data_dict[task_name]['job_id'] = json.loads(
+            task_response.content
+        )['JobId']
+        logger.info(
+            'Queued {name} task response: '.format(name=task_name) +
+            task_response.content
+        )
+
+    def do_job(self, task_name, wait_time=2, max_iters=100):
+        """ Wait until the job has been done on the job queue. """
+        self.queue_task(task_name)
+        self.wait_until_done(
+            self.data_dict[task_name]['job_id'],
+            wait_time=wait_time,
+            max_iters=max_iters
+        )
+
+    def do_jobs(self, job_list,  wait_time=2, max_iters=100):
+        """ Do all dependant jobs in the given list. """
+        for task_name in job_list:
+            self.do_job(
+                task_name,
+                wait_time=wait_time,
+                max_iters=max_iters
+            )

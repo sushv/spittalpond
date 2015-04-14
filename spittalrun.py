@@ -30,7 +30,8 @@ class SpittalRun(SpittalBase):
         )
         return response
 
-    def create_cdf_samples(self, name, cdf_id, number_of_samples, sample_type):
+    def create_cdf_samples(self, name, cdf_id, number_of_samples,
+                           random_number_table_instance):
         """ Create the CDF samples Django object.
 
         Args:
@@ -49,7 +50,7 @@ class SpittalRun(SpittalBase):
             name + "/" +
             str(cdf_id) + "/" +
             str(number_of_samples) + "/" +
-            str(sample_type) + "/"
+            str(random_number_table_instance) + "/"
         )
         return response
 
@@ -119,6 +120,97 @@ class SpittalRun(SpittalBase):
         return response
 
 
+    def create_random_number_instance(self, random_number_table_name,
+                                      random_number_table_version_id,
+                                      number_of_chunks,
+                                      number_of_rows_per_chunk,
+                                      number_of_pages,
+                                      number_of_samples_per_page):
+        """ Creates a random number table instance.
+
+        Args:
+            random_number_table_name (str): A user friendly name for the task.
+            number_of_chunks (int, optional): Self descriptive.
+            number_of_rows_per_chunk (int, optional):
+            number_of_pages (int, optional):
+            number_of_samples_per_page (int, optional):
+
+        Returns:
+            HttpResponse: server's response.
+        """
+        response = self.do_request(
+            self.base_url +
+            "/oasis/createRandomNumberTableInstance/" +
+            random_number_table_name + "/" +
+            str(random_number_table_version_id) + "/" +
+            str(number_of_chunks) + "/" +
+            str(number_of_rows_per_chunk) + "/" +
+            str(number_of_pages) + "/" +
+            str(number_of_samples_per_page) + "/"
+        )
+        logger.debug(
+            "createRandomNumberTableInstance respones: {resp}".format(
+                resp=response.content
+            )
+        )
+        return response
+
+    def auto_create_random_numbers(self, random_number_table_name="rand_nums",
+                                   number_of_chunks=10,
+                                   number_of_rows_per_chunk=1000,
+                                   number_of_pages=10,
+                                   number_of_samples_per_page=20):
+        """ Generate random numbers with the default Random Number Table Version.
+
+        Much of the time we just want to run Oasis without worry about these
+        "random" (computers can only generate pseudo-random numbers anyways)
+        numbers.
+
+        Use this method to quickly generate them for ease of use.
+
+        Note to Users: At the time of R1.3 there is, by default, a random
+        number table version with the ID of 2. This can be used to avoid
+        having to upload a random number table and create the version
+        manually.
+
+        Args:
+            random_number_table_name (str): A user friendly name for the task.
+            number_of_chunks (int, optional): Self descriptive.
+            number_of_rows_per_chunk (int, optional):
+            number_of_pages (int, optional):
+            number_of_samples_per_page (int, optional):
+
+        Returns:
+            None: Until we figure out something more contructive to return.
+        """
+
+        logger.info("Auto-creating random numbers.")
+
+        # Check if we need to create the data_dict keys.
+        for key in ["version_random", "random_instance"]:
+            if not key in self.data_dict:
+                self.data_dict[key] = {}
+        # Below, 2 is the default version.
+        # Setup the version in the data_dict accordingly.
+        self.data_dict["version_random"]["taskId"] = 2
+
+        # Setup the instance in the data_dict accordingly.
+        instance_resp = self.create_random_number_instance(
+            random_number_table_name,
+            self.data_dict["version_random"]["taskId"],
+            number_of_chunks,
+            number_of_rows_per_chunk,
+            number_of_pages,
+            number_of_samples_per_page
+        )
+        self.data_dict["random_instance"]["taskId"] =\
+            json.loads(instance_resp.content)['taskId']
+
+        # Run both of the jobs in order.
+        self.do_jobs(["version_random", "random_instance"])
+
+        return None
+
     def create_gul_data(self, gul_name, benchmark_id, exposure_instance):
         """ Create the ground up loss data based on our exposure instance.
 
@@ -136,36 +228,35 @@ class SpittalRun(SpittalBase):
         resp = self.create_cdf(gul_name, benchmark_id, exposure_instance)
         logger.info('Create cdf response: ' + resp.content)
 
-        self.data_dict['kernel_cdf']['id'] = json.loads(
+        self.data_dict['kernel_cdf']['taskId'] = json.loads(
             resp.content
-        )['id']
+        )['taskId']
 
         # Create the cdf_samples Django kernel object.
         self.data_dict['kernel_cdfsamples'] = {}
         resp = self.create_cdf_samples(
             gul_name,
-            self.data_dict['kernel_cdf']['id'],
+            self.data_dict['kernel_cdf']['taskId'],
             10,
-            2
+            self.data_dict['random_instance']['taskId']
         )
         logger.info('Create cdf_samples response: ' + resp.content)
 
-        self.data_dict['kernel_cdfsamples']['id'] = json.loads(
+        self.data_dict['kernel_cdfsamples']['taskId'] = json.loads(
             resp.content
-        )['id']
-
+        )['taskId']
 
         # Create the GUL Django kernel object.
         self.data_dict['kernel_gul'] = {}
-        resp = self.create_gul(gul_name,
-            self.data_dict['kernel_cdfsamples']['id'],
-            0
+        resp = self.create_gul(
+            gul_name,
+            self.data_dict['kernel_cdfsamples']['taskId'],
         )
         logger.info('Create kernel gul response: ' + resp.content)
 
-        self.data_dict['kernel_gul']['id'] = json.loads(
+        self.data_dict['kernel_gul']['taskId'] = json.loads(
             resp.content
-        )['id']
+        )['taskId']
 
         print("Created GUL data")
 
@@ -186,27 +277,27 @@ class SpittalRun(SpittalBase):
 
         # Create a new file download.
         self.data_dict['kernel_pubgul'] = {}
-        resp = self.create_file_download(
+        download_id = self.create_file_download(
             filename,
             self.pub_user,
             module_supplier_id
         )
-        logger.info('Create kernel GUL file download response, ' + resp.content)
-        self.data_dict['kernel_pubgul']['download_id'] = json.loads(
-            resp.content
-        )['id']
+        logger.info(
+            'Create kernel GUL file download response, ' + str(download_id)
+        )
+        self.data_dict['kernel_pubgul']['download_id'] = download_id
 
         # Create the publish GUL.
         resp = self.create_pub_gul(
             gul_name,
-            self.data_dict['kernel_gul']['id'],
+            self.data_dict['kernel_gul']['taskId'],
             self.data_dict['kernel_pubgul']['download_id']
         )
         logger.info('Create kernel publish GUL response , ' + resp.content)
 
-        self.data_dict['kernel_pubgul']['id'] = json.loads(
+        self.data_dict['kernel_pubgul']['taskId'] = json.loads(
             resp.content
-        )['id']
+        )['taskId']
 
         # Update the file download.
         self.update_file_download(
@@ -219,28 +310,30 @@ class SpittalRun(SpittalBase):
 
         self.data_dict['kernel_pubgul']['download_id_2'] = json.loads(
             resp.content
-        )['id']
+        )['taskId']
 
+        jobs_to_do = [
+            'kernel_cdf',
+            'kernel_cdfsamples',
+            'kernel_gul',
+            'kernel_pubgul',
+        ]
+        self.do_jobs(jobs_to_do, wait_time=1)
         # This has to be done like at the very last!!
-        self.load_models()
+        # self.load_models()
 
         # A makeshift save of the data.
         response1 = self.do_request(
             self.base_url +
             "/oasis/saveFilePubGUL/" +
             str(1) + "/" +
-            str(self.data_dict['kernel_pubgul']['id']) + "/"
+            str(self.data_dict['kernel_pubgul']['taskId']) + "/"
         )
+
         logger.info("Save pub GUL response " + response1.content)
 
-        # TODO: CLEAN UP THIS HERE MESS.
-        # Since the save file pub GUL takes time to finish
-        # We must wait for it to save the file.
-        import time
-        time.sleep(4)
-
-        # Reload everything again.
-        self.load_models()
+        # Do the pubgul task again.
+        self.do_jobs(["kernel_pubgul"], wait_time=1)
 
         # Actually download the file.
         resp = self.download_file(
