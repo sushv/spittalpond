@@ -2,40 +2,46 @@
 # Each section specified will be run based on key value pairs define in it.
 # Essentially, each section conveniently runs many underlying webservices.
 # The sections will be run in order.
-#
-[general]
-    log_file = "~/spittal.log"
-    log_level = "DEBUG"
+
+[meta]
+log_file = "spittal.log"
+log_level = "DEBUG"
 
 [login]
-    url = "127.0.0.1:8000"
-    do_timestamps = true
-    user = "root"
-    password = "password"
+url = "http://127.0.0.1:8000"
+user = "root"
+password = "password"
 
 [model]
-    name = "My test model"
-    [upload]
-        # Optionally, set a default upload directory prefix.
-        upload_directory_path = "./"
-        [dict.areaperil]
-            file_path = "MyAreaPerilDict_Oasis.csv"
-            module_supplier_id = 3
-        [dict.event]
-            module_supplier_id = 3
+name = "My test model"
+
+  [model.upload]
+  do_timestamps = true
+  # Optionally, set a default upload directory prefix.
+  upload_directory_path = "./"
+
+    [model.upload.dict.areaperil]
+    file_path = "MyAreaPerilDict_Oasis.csv"
+    module_supplier_id = 3
+
+    [model.upload.dict.event]
+    module_supplier_id = 3
 
 [exposure]
-    exposure_name = "My test exposure"
-    [upload]
-        [dict.exposure]
-            file_path = "MyExposureDict.csv"
-            module_supplier_id = 2
-        [version.exposure]
-            file_path = "MyExposureVersion.csv"
-            module_supplier_id = 2
+  exposure_name = "My test exposure"
+
+  [exposure.upload]
+  do_timestamps = true
+    [exposure.upload.dict.exposure]
+      file_path = "MyExposureDict.csv"
+      module_supplier_id = 2
+
+    [exposure.upload.version.exposure]
+      file_path = "MyExposureVersion.csv"
+      module_supplier_id = 2
 
 [benchmark]
-    name = "my benchmark"
-    chunk_size = 10
-    min_chunk = 3
-    max_chunk = 10
+name = "my benchmark"
+chunk_size = 10
+min_chunk = 3
+max_chunk = 10

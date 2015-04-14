@@ -10,6 +10,7 @@ class SpittalPond():
     to the Oasis mid-tier Django API.
     """
 
+    # TODO: Fix the the default log location below to work on Windows.
     def __init__(self, base_url, pub_user,
                  log_file='/var/tmp/logger.log', log_level=logging.INFO):
         # Initiating our sub classes
