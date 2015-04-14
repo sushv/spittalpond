@@ -276,6 +276,7 @@ class SpittalBase():
         return response
 
 
+    # TODO: Phase out this method. we should use config ui instead.
     def upload_directory(self, directory_path, do_timestamps=True, pkey=1):
         """ Upload an entire directory of files.
 
@@ -367,6 +368,58 @@ class SpittalBase():
             }
 
         print("Uploaded directory")
+
+    def prepare_file(data_name, filepath, module_supplier_id, do_timestamps=True):
+        """ Combines a few webservices for upload a file.
+
+        Creates the file upload and download id.
+        And actually uploads the file.
+
+        Args:
+            filepath (str): path to file to prepare.
+            module_supplier_id (int): overall module supplier for uploading.
+        """
+
+        filename = os.path.basename(pathname)
+        timestamp = self.create_timestamps()
+        # Timestamp files if nessecary.
+        if do_timestamps:
+            upload_filename = timestamp + filename
+
+        # Create the file upload.
+        up_id = self.create_file_upload(
+            upload_filename,
+            self.pub_user,
+            module_supplier_id
+        )
+        assert type(up_id) == int,\
+            "Bad upload ID response: Not an integer!"
+
+        # Create the file download.
+        down_id = self.create_file_download(
+            upload_filename,
+            self.pub_user,
+            module_supplier_id
+        )
+        assert type(down_id) == int,\
+            "Bad download ID response: Not an integer!"
+
+        # Actually upload the file to the server.
+        self.upload_file(
+            pathname,
+            upload_filename
+        )
+
+        # Save the data for later use.
+        # Update data_dict.
+        self.data_dict[data_name] = {
+            'filepath': pathname,
+            'upload_name': upload_filename,
+            'upload_id': up_id,
+            'download_id': down_id,
+            'module_supplier_id': module_supplier_id,
+        }
+
 
     # TODO: Appropriately name this method.
     def load_models(self):
