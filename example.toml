@@ -4,12 +4,12 @@
 # The sections will be run in order.
 
 [meta]
+url = "http://127.0.0.1:8000"
 log_file = "spittal.log"
 log_level = "DEBUG"
 system_config = 1
 
 [login]
-url = "http://127.0.0.1:8000"
 user = "root"
 password = "password"
 
@@ -22,10 +22,11 @@ key = "Model key"
 directory_path = "./"
 
   [model.dict.areaperil]
-  file_path = "MyAreaPerilDict_Oasis.csv"
+  filename = "MyAreaPerilDict_Oasis.csv"
   module_supplier_id = 3
 
   [model.dict.event]
+  filename = "lkj.csv"
   module_supplier_id = 3
 
 [exposure]
@@ -36,11 +37,11 @@ do_timestamps = true
 directory_path = "./"
 
   [exposure.dict.exposure]
-  file_path = "MyExposureDict.csv"
+  filename = "MyExposureDict.csv"
   module_supplier_id = 2
 
   [exposure.version.exposure]
-  file_path = "MyExposureVersion.csv"
+  filepath = "MyExposureVersion.csv"
   module_supplier_id = 2
 
 [benchmark]

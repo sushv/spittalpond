@@ -275,7 +275,6 @@ class SpittalBase():
         )
         return response
 
-
     # TODO: Phase out this method. we should use config ui instead.
     def upload_directory(self, directory_path, do_timestamps=True, pkey=1):
         """ Upload an entire directory of files.
@@ -369,15 +368,19 @@ class SpittalBase():
 
         print("Uploaded directory")
 
-    def prepare_file(data_name, filepath, module_supplier_id, do_timestamps=True):
+    def prepare_file(self, data_name, pathname, module_supplier_id,
+                     do_timestamps=True):
         """ Combines a few webservices for upload a file.
 
-        Creates the file upload and download id.
-        And actually uploads the file.
+        "Prepare" is a term genrally meaning:
+            - Creating the file upload and download id's.
+            - And then actually uploading the file.
 
         Args:
-            filepath (str): path to file to prepare.
+            data_name (str): name from self.types dictionary.
+            pathname (str): path to file to prepare.
             module_supplier_id (int): overall module supplier for uploading.
+            do_timestamps (bool): whether to prepend timestamps on upload.
         """
 
         filename = os.path.basename(pathname)
