@@ -33,21 +33,30 @@ def verify_config(config):
         elif 'password' not in config['login'].keys():
             raise Exception(quick_msg("password"))
 
+    def validate_upload_section(section, prefix="", suffix=""):
+        def pre_ssn(string, sub):
+            """ Prepends the subsection name to a string. """
+            return sub + " " + string
+
+        if 'do_timestamps' not in section.keys():
+            section['do_timestamps'] = True
+        if 'directory_path' not in section.keys():
+            raise Exception(quick_msg('directory_path'))
+        categories = {k: v for k, v in section.iteritems()\
+                    if k in ['dict', 'version']}
+        for category in categories.itervalues():
+            for name, value in category.iteritems():
+                if 'filename' not in value.iterkeys():
+                    raise Exception(quick_msg(pre_ssn('filename', name)))
+                if 'module_supplier_id' not in value.iterkeys():
+                    raise Exception(
+                        quick_msg(pre_ssn('module_supplier_id', name))
+                    )
+
     if 'model' in config.keys():
         prefix = "FATAL:"
         suffix = "not specified in the model section!"
-        if 'upload' in config['model'].keys():
-            if 'do_timestamps' not in config['model']['upload'].keys():
-                config['model']['upload']['do_timestamps'] = True
-            if 'directory_path' not in config['model']['upload'].keys():
-                raise Exception(quick_msg('directory_path'))
-            profiles = {k: v for k, v in config['model']\
-                        if k in ['dict', 'version']}
-            for profile in profiles:
-                if 'filename' not in profile.keys():
-                    raise Exception(quick_msg('filename'))
-                if 'module_supplier_id' not in profile.keys():
-                    raise Exception(quick_msg('module_supplier_id'))
+        validate_upload_section(config['model'], prefix, suffix)
 
     return True
 
