@@ -8,6 +8,10 @@ import spittalpond
 def verify_config(config):
     """ Verifies the config dictionary-like object for correctness.
 
+    Also creates any unspecified optional config key-value pairs. This ensures
+    that every recognized key in the config dictionary is safe to use and will
+    not raise a KeyError.
+
     Args:
         config (dict): A python dictionary containing the config data.
 
@@ -24,6 +28,9 @@ def verify_config(config):
         suffix = "not specified in the meta section!"
         if 'url' not in config['meta'].keys():
             raise Exception(quick_msg("URL"))
+        # TODO: Handle "turning off" logging here if file unspecfied.
+        if 'log_level' not in config['meta'].keys():
+            config['meta']['log_level'] = "INFO"
 
     if 'login' not in config.keys():
         prefix = "FATAL:"
@@ -33,10 +40,10 @@ def verify_config(config):
         elif 'password' not in config['login'].keys():
             raise Exception(quick_msg("password"))
 
-    def validate_upload_section(section, prefix="", suffix=""):
+    def validate_upload_sections(section, prefix="", suffix=""):
         def pre_ssn(string, sub):
             """ Prepends the subsection name to a string. """
-            return sub + " " + string
+            return sub + "." + string
 
         if 'do_timestamps' not in section.keys():
             section['do_timestamps'] = True
@@ -44,19 +51,27 @@ def verify_config(config):
             raise Exception(quick_msg('directory_path'))
         categories = {k: v for k, v in section.iteritems()\
                     if k in ['dict', 'version']}
-        for category in categories.itervalues():
+        for cat_name, category in categories.iteritems():
             for name, value in category.iteritems():
+                fuller_name = cat_name + "." + name
                 if 'filename' not in value.iterkeys():
-                    raise Exception(quick_msg(pre_ssn('filename', name)))
+                    raise Exception(
+                        quick_msg(pre_ssn('filename', fuller_name))
+                    )
                 if 'module_supplier_id' not in value.iterkeys():
                     raise Exception(
-                        quick_msg(pre_ssn('module_supplier_id', name))
+                        quick_msg(pre_ssn('module_supplier_id', fuller_name))
                     )
 
     if 'model' in config.keys():
         prefix = "FATAL:"
         suffix = "not specified in the model section!"
-        validate_upload_section(config['model'], prefix, suffix)
+        validate_upload_sections(config['model'], prefix, suffix)
+
+    if 'exposure' in config.keys():
+        prefix = "FATAL:"
+        suffix = "not specified in the exposure section!"
+        validate_upload_sections(config['exposure'], prefix, suffix)
 
     return True
 
@@ -90,7 +105,7 @@ def prepare_files_in_section(spittal_sub_instance, section):
 def run_model(spittal_instance, config):
     """ Run model section of the config.
 
-    This method assumes that the config is already validated.
+    This method assumes that the config is already validated and we are logged in.
 
     Args:
         spittal_instance (SpittalPond): SpittalPond object to run with.
@@ -98,8 +113,25 @@ def run_model(spittal_instance, config):
     """
 
     spit = spittal_instance
-
     prepare_files_in_section(spit.model, config['model'])
+    spit.model.create_model_structures()
+    spit.model.load_models()
+
+
+def run_exposure(spittal_instance, config):
+    """ Run exposure section of the config.
+
+    This method assumes that the config is already validated and we are logged in.
+
+    Args:
+        spittal_instance (SpittalPond): SpittalPond object to run with.
+        config (dict): Contains specific details for running the model.
+    """
+
+    spit = spittal_instance
+    prepare_files_in_section(spit.exposure, config['exposure'])
+    spit.exposure.create_exposure_structure(spit.model.data_dict)
+    spit.exposure.load_models()
 
 
 def runner(config_file):
@@ -115,13 +147,19 @@ def runner(config_file):
     spit = spittalpond.SpittalPond(
         base_url=config['meta']['url'],
         pub_user=config['login']['user'],
-        log_file=config['meta']['log_file']
+        log_file=config['meta']['log_file'],
+        log_level=config['meta']['log_level'],
     )
 
     spit.model.do_login(config['login']['password'])
 
     if 'model' in config.keys():
         run_model(spit, config)
+
+    if 'exposure' in config.keys():
+        # TODO: We shouldn't have to log in twice. Instead share cookies.
+        spit.exposure.do_login(config['login']['password'])
+        run_exposure(spit, config)
 
 if __name__ == "__main__":
     # Grab the first argument passed. This is the file name.
