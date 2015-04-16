@@ -42,6 +42,7 @@ class SpittalBase():
         "instance_vuln": "VulnInstance",
         "instance_hazfp": "HazFPInstance",
         "instance_random": "RandomNumberTableInstance",
+        "kernel_benchmark": "Benchmark",
         "kernel_cdf": "CDF",
         "kernel_cdfsamples": "CDFSamples",
         "kernel_gul": "GUL",

@@ -73,6 +73,18 @@ def verify_config(config):
         suffix = "not specified in the exposure section!"
         validate_upload_sections(config['exposure'], prefix, suffix)
 
+    if 'benchmark' in config.keys():
+        prefix = "FATAL:"
+        suffix = "not specified in the benchmark section!"
+        if 'name' not in config['benchmark'].keys():
+            raise Exception(quick_msg('name'))
+        if 'chunk_size' not in config['benchmark'].keys():
+            raise Exception(quick_msg('chunk_size'))
+        if 'min_chunk' not in config['benchmark'].keys():
+            raise Exception(quick_msg('min_chunk'))
+        if 'max_chunk' not in config['benchmark'].keys():
+            raise Exception(quick_msg('max_chunk'))
+
     return True
 
 def prepare_files_in_section(spittal_sub_instance, section):
@@ -160,6 +172,11 @@ def runner(config_file):
         # TODO: We shouldn't have to log in twice. Instead share cookies.
         spit.exposure.do_login(config['login']['password'])
         run_exposure(spit, config)
+
+    if 'benchmark' in config.keys():
+        spit.exposure.create_benchmark_structure(
+            config['benchmark']['name']
+        )
 
 if __name__ == "__main__":
     # Grab the first argument passed. This is the file name.

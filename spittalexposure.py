@@ -240,3 +240,21 @@ class SpittalExposure(SpittalBase):
             str(max_chunk) + "/"
         )
         return response
+
+    def create_benchmark_structure(self, name):
+        """ Adds the benchmark chunks to the backend database. """
+
+        create_resp = self.create_benchmark(name=name)
+        logger.debug(
+            'Create benchmark response: ' + create_resp.content
+        )
+
+        if 'kernel_benchmark' not in self.data_dict.keys():
+            self.data_dict['kernel_benchmark'] = {}
+        self.data_dict['kernel_benchmark']['taskId'] = json.loads(
+            create_resp.content
+        )['taskId']
+
+        self.do_job('kernel_benchmark')
+
+        print "Finished benchmark creation."
