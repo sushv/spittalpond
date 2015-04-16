@@ -2,7 +2,6 @@ Todo List (in priority order):
  - [ ] Update the README.md with a simple summary and setup.
  - [ ] Handle issues for when the Django API returns JSON with success = false.
  - [ ] Get rid of all the hardcoded values in spittalrun. This includes config_ID.
- - [ ] Unify the usage of the word exposure. Sometimes it is pluralized with an 's' on the end.
  - [ ] Start handling errors if the Django API does not return JSON. (server side error)
  - [ ] Complete the get_model() method in SpittalModel.
  - [ ] Possibly create logger_messages.py to consolidate all messages.
