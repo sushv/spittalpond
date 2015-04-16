@@ -217,7 +217,7 @@ class SpittalRun(SpittalBase):
         Args:
             gul_name (str): the user friendly name of the gul to create
             benchmark_id (int): the id returned from create_benchmark().
-            exposure_instance_id (int): id returned from create_exposure_instance().
+            exposure_instance_id (int): id from create_exposure_instance().
 
         Returns:
             HttpResponse: server's response.

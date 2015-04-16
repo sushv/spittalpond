@@ -85,6 +85,12 @@ def verify_config(config):
         if 'max_chunk' not in config['benchmark'].keys():
             raise Exception(quick_msg('max_chunk'))
 
+    if 'gul' in config.keys():
+        prefix = "FATAL:"
+        suffix = "not specified in the gul section!"
+        if 'name' not in config['benchmark'].keys():
+            raise Exception(quick_msg('name'))
+
     return True
 
 def prepare_files_in_section(spittal_sub_instance, section):
@@ -178,6 +184,19 @@ def runner(config_file):
             config['benchmark']['name']
         )
 
+    if 'gul' in config.keys():
+        # TODO: We shouldn't have to log in twice. Instead share cookies.
+        spit.run.do_login(config['login']['password'])
+        spit.run.auto_create_random_numbers()
+        spit.run.create_gul_data(
+            config['gul']['name'],
+            spit.exposure.data_dict['kernel_benchmark']['taskId'],
+            spit.exposure.data_dict['version_exposure']['taskId'],
+        )
+
+
+    return spit
+
 if __name__ == "__main__":
     # Grab the first argument passed. This is the file name.
     parser = argparse.ArgumentParser(
@@ -192,4 +211,4 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    runner(args.config_file)
+    spittalpond_instance = runner(args.config_file)
