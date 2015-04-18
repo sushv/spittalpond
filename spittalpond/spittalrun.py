@@ -14,7 +14,7 @@ class SpittalRun(SpittalBase):
         """ Creates the CDF Django object.
 
         Args:
-            name (str): UNKNOWN, assuming just a user-friendly name.
+            name (str): A user-friendly name.
             benchmark_id (int): the id returned from create_benchmark().
             exposure_instance_id (int): id returned from create_exposure_instance().
 
@@ -35,7 +35,7 @@ class SpittalRun(SpittalBase):
         """ Create the CDF samples Django object.
 
         Args:
-            name (str): UNKNOWN, assuming just a user-friendly name.
+            name (str): A user-friendly name.
             cdf_id (int): id returned from create_cdf()
             number_of_samples(int): number of cdf samples to create.
             sample_type (int): UNKNOWN
@@ -58,7 +58,7 @@ class SpittalRun(SpittalBase):
         """ Creates the ground up loss.
 
         Args:
-            name (str): UNKNOWN, assuming just a user-friendly name.
+            name (str): A user-friendly name.
             cdf_samples_id (int): id returned from create_cdf_samples().
             loss_threshhold (int): UNKNOWN
 
@@ -79,7 +79,7 @@ class SpittalRun(SpittalBase):
         """ Create the publish ground up loss.
 
         Args:
-            name (str): UNKNOWN, assuming just a user-friendly name.
+            name (str): A user-friendly name.
             gul_id (int): id returned from create_gul().
             download_file_id: id returned from create_file_download().
 
@@ -95,12 +95,12 @@ class SpittalRun(SpittalBase):
         )
         return response
 
-    def update_file_download(self, id, name, module_supplier_id, filename):
+    def update_file_download(self, download_id, name, module_supplier_id, filename):
         """ Much like the create_file_download method but instead updates.
 
         Args:
-            id (int): id returned from create_file_download.
-            name (str): UNKNOWN, assuming just a user-friendly name.
+            download_id (int): id returned from create_file_download.
+            name (str): A user-friendly name.
             module_supplier_id (int): id of the module that supplies the
                 python and SQL code for this file.
                 See /oasis/django/oasis/app/scripts/Dict
@@ -112,7 +112,7 @@ class SpittalRun(SpittalBase):
         response = self.do_request(
             self.base_url +
             "/oasis/updateFileDownload/" +
-            str(id) + "/" +
+            str(download_id) + "/" +
             name + "/" +
             str(module_supplier_id) + "/" +
             filename + "/"
