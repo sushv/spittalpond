@@ -6,7 +6,10 @@
 Welcome to spitttalpond's documentation!
 ========================================
 
-Contents:
+.. automodule:: spittalpond
+    :members:
+
+Table of Contents:
 
 .. toctree::
     :maxdepth: 2

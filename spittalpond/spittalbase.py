@@ -282,8 +282,9 @@ class SpittalBase():
         In order to achieve this I created a file naming convention.
         This naming convention splits the name into three parts separated
         by underscores and appended with a .csv extension:
+
             1. The file's type. Either dictionary or version corresponding
-                to it's Oasis profile type.
+               to it's Oasis profile type.
             2. The specific name below the type. Must be any of the below:
                 - areaperil
                 - damagebin
@@ -292,10 +293,10 @@ class SpittalBase():
                 - hazardintensitybin
                 - vuln
                 - hazfp
-            3. Lastely, for now, the module supplier will be hard coded into
-                 the name of each file. Really the main reason for this is
-                 because we do not have a config file to specify all of this.
-                 TODO: Create a config file to run everything automatically!
+            3. Lastly, for now, the module supplier will be hard coded into the
+               name of each file. Really the main reason for this is because we
+               do not have a config file to specify all of this.
+               TODO: Create a config file to run everything automatically!
 
         Args:
             directory_path (str): path to the directory to upload from.

@@ -1,5 +1,5 @@
 Spittal Base
-==================
+============
 
-.. automodule:: spittalbase
+.. automodule:: spittalpond.spittalbase
     :members:

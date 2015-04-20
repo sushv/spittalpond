@@ -1,6 +1,6 @@
-spittalpond
-==================
+Spittalpond
+===========
 
-.. automodule:: spittalpond
+.. automodule:: spittalpond.spittalpond
     :members:
     :undoc-members:

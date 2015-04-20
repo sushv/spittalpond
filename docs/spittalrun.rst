@@ -1,5 +1,5 @@
 Spittal Run
 ==================
 
-.. automodule:: spittalrun
+.. automodule:: spittalpond.spittalrun
     :members:
