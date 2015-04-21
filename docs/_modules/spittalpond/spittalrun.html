@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>spittalpond.spittalrun &mdash; spitttalpond 0.0.2 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.2',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">spitttalpond 0.0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for spittalpond.spittalrun</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">spittalbase</span> <span class="kn">import</span> <span class="n">SpittalBase</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;spittalpond&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SpittalRun"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun">[docs]</a><span class="k">class</span> <span class="nc">SpittalRun</span><span class="p">(</span><span class="n">SpittalBase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Handles everything related to running the data processs</span>
+
+<span class="sd">    This is where all of the data and .csv files are created.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SpittalRun.create_cdf"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_cdf">[docs]</a>    <span class="k">def</span> <span class="nf">create_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">,</span> <span class="n">exposure_instance_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the CDF Django object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): A user-friendly name.</span>
+<span class="sd">            benchmark_id (int): the id returned from create_benchmark().</span>
+<span class="sd">            exposure_instance_id (int): id returned from create_exposure_instance().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createCDF/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">benchmark_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">exposure_instance_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.create_cdf_samples"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_cdf_samples">[docs]</a>    <span class="k">def</span> <span class="nf">create_cdf_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cdf_id</span><span class="p">,</span> <span class="n">number_of_samples</span><span class="p">,</span>
+                           <span class="n">random_number_table_instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the CDF samples Django object.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): A user-friendly name.</span>
+<span class="sd">            cdf_id (int): id returned from create_cdf()</span>
+<span class="sd">            number_of_samples(int): number of cdf samples to create.</span>
+<span class="sd">            sample_type (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createCDFSamples/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">cdf_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_of_samples</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">random_number_table_instance</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.create_gul"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_gul">[docs]</a>    <span class="k">def</span> <span class="nf">create_gul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">cdf_samples_id</span><span class="p">,</span> <span class="n">loss_threshhold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the ground up loss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): A user-friendly name.</span>
+<span class="sd">            cdf_samples_id (int): id returned from create_cdf_samples().</span>
+<span class="sd">            loss_threshhold (int): UNKNOWN</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createGUL/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">cdf_samples_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">loss_threshhold</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.create_pub_gul"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_pub_gul">[docs]</a>    <span class="k">def</span> <span class="nf">create_pub_gul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">gul_id</span><span class="p">,</span> <span class="n">download_file_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the publish ground up loss.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            name (str): A user-friendly name.</span>
+<span class="sd">            gul_id (int): id returned from create_gul().</span>
+<span class="sd">            download_file_id: id returned from create_file_download().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createPubGUL/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">gul_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">download_file_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.update_file_download"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.update_file_download">[docs]</a>    <span class="k">def</span> <span class="nf">update_file_download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">download_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Much like the create_file_download method but instead updates.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            download_id (int): id returned from create_file_download.</span>
+<span class="sd">            name (str): A user-friendly name.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+<span class="sd">            filename (str): name of the new file download.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/updateFileDownload/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">download_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="n">filename</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+</div>
+<div class="viewcode-block" id="SpittalRun.create_random_number_instance"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_random_number_instance">[docs]</a>    <span class="k">def</span> <span class="nf">create_random_number_instance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_number_table_name</span><span class="p">,</span>
+                                      <span class="n">random_number_table_version_id</span><span class="p">,</span>
+                                      <span class="n">number_of_chunks</span><span class="p">,</span>
+                                      <span class="n">number_of_rows_per_chunk</span><span class="p">,</span>
+                                      <span class="n">number_of_pages</span><span class="p">,</span>
+                                      <span class="n">number_of_samples_per_page</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a random number table instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            random_number_table_name (str): A user friendly name for the task.</span>
+<span class="sd">            number_of_chunks (int, optional): Self descriptive.</span>
+<span class="sd">            number_of_rows_per_chunk (int, optional):</span>
+<span class="sd">            number_of_pages (int, optional):</span>
+<span class="sd">            number_of_samples_per_page (int, optional):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/createRandomNumberTableInstance/&quot;</span> <span class="o">+</span>
+            <span class="n">random_number_table_name</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">random_number_table_version_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_of_chunks</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_of_rows_per_chunk</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_of_pages</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">number_of_samples_per_page</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s">&quot;createRandomNumberTableInstance respones: {resp}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">resp</span><span class="o">=</span><span class="n">response</span><span class="o">.</span><span class="n">content</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">response</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.auto_create_random_numbers"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.auto_create_random_numbers">[docs]</a>    <span class="k">def</span> <span class="nf">auto_create_random_numbers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">random_number_table_name</span><span class="o">=</span><span class="s">&quot;rand_nums&quot;</span><span class="p">,</span>
+                                   <span class="n">number_of_chunks</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                   <span class="n">number_of_rows_per_chunk</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+                                   <span class="n">number_of_pages</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                                   <span class="n">number_of_samples_per_page</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generate random numbers with the default Random Number Table Version.</span>
+
+<span class="sd">        Much of the time we just want to run Oasis without worry about these</span>
+<span class="sd">        &quot;random&quot; (computers can only generate pseudo-random numbers anyways)</span>
+<span class="sd">        numbers.</span>
+
+<span class="sd">        Use this method to quickly generate them for ease of use.</span>
+
+<span class="sd">        Note to Users: At the time of R1.3 there is, by default, a random</span>
+<span class="sd">        number table version with the ID of 2. This can be used to avoid</span>
+<span class="sd">        having to upload a random number table and create the version</span>
+<span class="sd">        manually.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            random_number_table_name (str): A user friendly name for the task.</span>
+<span class="sd">            number_of_chunks (int, optional): Self descriptive.</span>
+<span class="sd">            number_of_rows_per_chunk (int, optional):</span>
+<span class="sd">            number_of_pages (int, optional):</span>
+<span class="sd">            number_of_samples_per_page (int, optional):</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None: Until we figure out something more contructive to return.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Auto-creating random numbers.&quot;</span><span class="p">)</span>
+
+        <span class="c"># Check if we need to create the data_dict keys.</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;version_random&quot;</span><span class="p">,</span> <span class="s">&quot;random_instance&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="c"># Below, 2 is the default version.</span>
+        <span class="c"># Setup the version in the data_dict accordingly.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&quot;version_random&quot;</span><span class="p">][</span><span class="s">&quot;taskId&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="c"># Setup the instance in the data_dict accordingly.</span>
+        <span class="n">instance_resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_random_number_instance</span><span class="p">(</span>
+            <span class="n">random_number_table_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&quot;version_random&quot;</span><span class="p">][</span><span class="s">&quot;taskId&quot;</span><span class="p">],</span>
+            <span class="n">number_of_chunks</span><span class="p">,</span>
+            <span class="n">number_of_rows_per_chunk</span><span class="p">,</span>
+            <span class="n">number_of_pages</span><span class="p">,</span>
+            <span class="n">number_of_samples_per_page</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&quot;random_instance&quot;</span><span class="p">][</span><span class="s">&quot;taskId&quot;</span><span class="p">]</span> <span class="o">=</span>\
+            <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">instance_resp</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="c"># Run both of the jobs in order.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_jobs</span><span class="p">([</span><span class="s">&quot;version_random&quot;</span><span class="p">,</span> <span class="s">&quot;random_instance&quot;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.create_gul_data"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.create_gul_data">[docs]</a>    <span class="k">def</span> <span class="nf">create_gul_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gul_name</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">,</span> <span class="n">exposure_instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the ground up loss data based on our exposure instance.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gul_name (str): the user friendly name of the gul to create</span>
+<span class="sd">            benchmark_id (int): the id returned from create_benchmark().</span>
+<span class="sd">            exposure_instance_id (int): id returned from create_exposure_instance().</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Create the cdf Django kernel object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdf&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_cdf</span><span class="p">(</span><span class="n">gul_name</span><span class="p">,</span> <span class="n">benchmark_id</span><span class="p">,</span> <span class="n">exposure_instance</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create cdf response: &#39;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdf&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="c"># Create the cdf_samples Django kernel object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdfsamples&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_cdf_samples</span><span class="p">(</span>
+            <span class="n">gul_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdf&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">],</span>
+            <span class="mi">10</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;random_instance&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create cdf_samples response: &#39;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdfsamples&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="c"># Create the GUL Django kernel object.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_gul&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_gul</span><span class="p">(</span>
+            <span class="n">gul_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_cdfsamples&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create kernel gul response: &#39;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_gul&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Created GUL data&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SpittalRun.get_gul_data"><a class="viewcode-back" href="../../code_docs/spittalrun.html#spittalpond.spittalrun.SpittalRun.get_gul_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_gul_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gul_name</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the GUL data from the server.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            gul_name (str): The user friendly name of the GUL to create</span>
+<span class="sd">            filename (str): the name of file to create and download.</span>
+<span class="sd">            module_supplier_id (int): id of the module that supplies the</span>
+<span class="sd">                python and SQL code for this file.</span>
+<span class="sd">                See /oasis/django/oasis/app/scripts/Dict</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            HttpResponse: server&#39;s response.</span>
+<span class="sd">            This response also contains all the data from the GUL creation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c"># Create a new file download.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">download_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_download</span><span class="p">(</span>
+            <span class="n">filename</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
+            <span class="n">module_supplier_id</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s">&#39;Create kernel GUL file download response, &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">download_id</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;download_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">download_id</span>
+
+        <span class="c"># Create the publish GUL.</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_pub_gul</span><span class="p">(</span>
+            <span class="n">gul_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_gul&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;download_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&#39;Create kernel publish GUL response , &#39;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="c"># Update the file download.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_file_download</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;download_id&#39;</span><span class="p">],</span>
+            <span class="n">filename</span><span class="p">,</span>
+            <span class="n">module_supplier_id</span><span class="p">,</span>
+            <span class="n">filename</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;update kernel publish GUL download, &quot;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;download_id_2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+
+        <span class="n">jobs_to_do</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s">&#39;kernel_cdf&#39;</span><span class="p">,</span>
+            <span class="s">&#39;kernel_cdfsamples&#39;</span><span class="p">,</span>
+            <span class="s">&#39;kernel_gul&#39;</span><span class="p">,</span>
+            <span class="s">&#39;kernel_pubgul&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_jobs</span><span class="p">(</span><span class="n">jobs_to_do</span><span class="p">,</span> <span class="n">wait_time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c"># This has to be done like at the very last!!</span>
+        <span class="c"># self.load_models()</span>
+
+        <span class="c"># A makeshift save of the data.</span>
+        <span class="n">response1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
+            <span class="s">&quot;/oasis/saveFilePubGUL/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
+            <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+        <span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Save pub GUL response &quot;</span> <span class="o">+</span> <span class="n">response1</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="c"># Do the pubgul task again.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_jobs</span><span class="p">([</span><span class="s">&quot;kernel_pubgul&quot;</span><span class="p">],</span> <span class="n">wait_time</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c"># Actually download the file.</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="s">&#39;kernel_pubgul&#39;</span><span class="p">][</span><span class="s">&#39;download_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Download Herlp gul response &quot;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">resp</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">spitttalpond 0.0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Beckett Simmons.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
+    </div>
+  </body>
+</html>

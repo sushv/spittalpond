@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Welcome to spitttalpond’s documentation! &mdash; spitttalpond 0.1 documentation</title>
+    <title>Welcome to spitttalpond’s documentation! &mdash; spitttalpond 0.0.2 documentation</title>
     
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.1',
+        VERSION:     '0.0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,8 +23,8 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="spitttalpond 0.1 documentation" href="#" />
-    <link rel="next" title="spittalpond" href="spittalpond.html" /> 
+    <link rel="top" title="spitttalpond 0.0.2 documentation" href="#" />
+    <link rel="next" title="Implementation Examples" href="examples/index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,9 +37,9 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="spittalpond.html" title="spittalpond"
+          <a href="examples/index.html" title="Implementation Examples"
              accesskey="N">next</a> |</li>
-        <li><a href="#">spitttalpond 0.1 documentation</a> &raquo;</li> 
+        <li><a href="#">spitttalpond 0.0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -48,16 +48,43 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="welcome-to-spitttalpond-s-documentation">
-<h1>Welcome to spitttalpond&#8217;s documentation!<a class="headerlink" href="#welcome-to-spitttalpond-s-documentation" title="Permalink to this headline">¶</a></h1>
-<p>Contents:</p>
+  <div class="section" id="module-spittalpond">
+<span id="welcome-to-spitttalpond-s-documentation"></span><h1>Welcome to spitttalpond&#8217;s documentation!<a class="headerlink" href="#module-spittalpond" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="spittalpond-oasis-api-package">
+<h2>Spittalpond Oasis API Package<a class="headerlink" href="#spittalpond-oasis-api-package" title="Permalink to this headline">¶</a></h2>
+<p>Spittalpond is a Python interface for the OasisLMF Django API webservices. It acts as a front-end that
+allows you to run models, exposures and other useful webservices in Oasis. Effectively, it&#8217;s turns
+you Oasis style .csv files into useful GUL data!</p>
+<p>Basic usage of spittalpond package:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">spittalpond</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spit</span> <span class="o">=</span> <span class="n">spittalpond</span><span class="o">.</span><span class="n">SpittalPond</span><span class="p">(</span><span class="s">&quot;http://127.0.0.1:8000&quot;</span><span class="p">,</span> <span class="s">&quot;root&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">spit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">do_login</span><span class="p">(</span><span class="s">&quot;password&quot;</span><span class="p">)</span>
+<span class="go">You are logged into Mid-tier</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resp</span> <span class="o">=</span> <span class="n">spit</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span><span class="s">&quot;http://127.0.0.1:8000/oasis/listGUL/&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+<span class="go">&#39;[{&quot;optionValue&quot;:1,&quot;canWrite&quot;:true,&quot;optionDisplay&quot;:&quot;GUL&quot;,&quot;success&quot;:true,&quot;canRead&quot;:true},{&quot;optionValue&quot;:2,&quot;canWrite&quot;:true</span>
+<span class="go">,&quot;optionDisplay&quot;:&quot;spittalGUL&quot;,&quot;success&quot;:true,&quot;canRead&quot;:true}]&#39;</span>
+<span class="go">&gt;&gt;&gt;</span>
+</pre></div>
+</div>
+<p>Full documentation is at &lt;<a class="reference external" href="http://beckettsimmons.github.io/spittalpond/docs/">http://beckettsimmons.github.io/spittalpond/docs/</a>&gt;.</p>
+</div>
+<hr class="docutils" />
+<p>Table of Contents:</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="spittalpond.html">spittalpond</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spittalbase.html">Spittal Base</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spittalmodel.html">Spittal Model</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spittalexposure.html">Spittal Exposure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="spittalrun.html">Spittal Run</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/index.html">Implementation Examples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="examples/ipynb_example.html">IPython Notebook Walkthrough</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="code_docs/index.html">Code Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="code_docs/spittalpond.html">Spittalpond</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_docs/spittalbase.html">Spittal Base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_docs/spittalmodel.html">Spittal Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_docs/spittalexposure.html">Spittal Exposure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="code_docs/spittalrun.html">Spittal Run</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -78,13 +105,16 @@
         <div class="sphinxsidebarwrapper">
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Welcome to spitttalpond&#8217;s documentation!</a></li>
+<li><a class="reference internal" href="#">Welcome to spitttalpond&#8217;s documentation!</a><ul>
+<li><a class="reference internal" href="#spittalpond-oasis-api-package">Spittalpond Oasis API Package</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
   <h4>Next topic</h4>
-  <p class="topless"><a href="spittalpond.html"
-                        title="next chapter">spittalpond</a></p>
+  <p class="topless"><a href="examples/index.html"
+                        title="next chapter">Implementation Examples</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/index.txt"
@@ -117,14 +147,14 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="spittalpond.html" title="spittalpond"
+          <a href="examples/index.html" title="Implementation Examples"
              >next</a> |</li>
-        <li><a href="#">spitttalpond 0.1 documentation</a> &raquo;</li> 
+        <li><a href="#">spitttalpond 0.0.2 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, Beckett Simmons.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>

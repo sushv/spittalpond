@@ -6,38 +6,38 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>spittalbase &mdash; spitttalpond 0.1 documentation</title>
+    <title>spittalpond.spittalbase &mdash; spitttalpond 0.0.2 documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    '../',
-        VERSION:     '0.1',
+        URL_ROOT:    '../../',
+        VERSION:     '0.0.2',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
       };
     </script>
-    <script type="text/javascript" src="../_static/jquery.js"></script>
-    <script type="text/javascript" src="../_static/underscore.js"></script>
-    <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="spitttalpond 0.1 documentation" href="../index.html" />
-    <link rel="up" title="Module code" href="index.html" /> 
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="spitttalpond 0.0.2 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
+          <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li> 
+        <li><a href="../../index.html">spitttalpond 0.0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -46,7 +46,7 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <h1>Source code for spittalbase</h1><div class="highlight"><pre>
+  <h1>Source code for spittalpond.spittalbase</h1><div class="highlight"><pre>
 <span class="kn">import</span> <span class="nn">requests</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">glob</span>
@@ -56,7 +56,7 @@
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s">&#39;spittalpond&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SpittalBase"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase">[docs]</a><span class="k">class</span> <span class="nc">SpittalBase</span><span class="p">():</span>
+<div class="viewcode-block" id="SpittalBase"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase">[docs]</a><span class="k">class</span> <span class="nc">SpittalBase</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot; A base class that contains generic spittal functions</span>
 
 <span class="sd">    Classes such as SpittalModel and SpittalExposures will import this one.</span>
@@ -67,6 +67,8 @@
     <span class="c"># Each subclass only really needs to know about itself.</span>
     <span class="c"># TODO: fix the naming of instance here.</span>
     <span class="c"># The instance suffix shoudl come first.</span>
+    <span class="c"># Also, Should be version_exposure _not_ exposure_main.</span>
+    <span class="c"># And correlations main it&#39;s looking pretty.</span>
     <span class="n">types</span> <span class="o">=</span> <span class="p">{</span>
         <span class="c"># correlations is special, it&#39;s just a file, that&#39;s all!</span>
         <span class="s">&quot;correlations_main&quot;</span><span class="p">:</span><span class="bp">None</span><span class="p">,</span>
@@ -76,17 +78,19 @@
         <span class="s">&quot;dict_exposure&quot;</span><span class="p">:</span><span class="s">&quot;ExposureDict&quot;</span><span class="p">,</span>
         <span class="s">&quot;dict_hazardintensitybin&quot;</span><span class="p">:</span><span class="s">&quot;HazardIntensityBinDict&quot;</span><span class="p">,</span>
         <span class="s">&quot;dict_vuln&quot;</span><span class="p">:</span><span class="s">&quot;VulnDict&quot;</span><span class="p">,</span>
+        <span class="s">&quot;dict_random&quot;</span><span class="p">:</span><span class="s">&quot;RandomNumberTable&quot;</span><span class="p">,</span>
         <span class="s">&quot;exposures_instance&quot;</span><span class="p">:</span><span class="s">&quot;ExposureInstance&quot;</span><span class="p">,</span>
         <span class="s">&quot;exposures_main&quot;</span><span class="p">:</span><span class="s">&quot;ExposureVersion&quot;</span><span class="p">,</span>
         <span class="s">&quot;version_hazfp&quot;</span><span class="p">:</span><span class="s">&quot;HazFPVersion&quot;</span><span class="p">,</span>
         <span class="s">&quot;version_vuln&quot;</span><span class="p">:</span><span class="s">&quot;VulnVersion&quot;</span><span class="p">,</span>
+        <span class="s">&quot;version_random&quot;</span><span class="p">:</span> <span class="s">&quot;RandomNumberTableVersion&quot;</span><span class="p">,</span>
         <span class="s">&quot;vuln_instance&quot;</span><span class="p">:</span><span class="s">&quot;VulnInstance&quot;</span><span class="p">,</span>
         <span class="s">&quot;hazfp_instance&quot;</span><span class="p">:</span><span class="s">&quot;HazFPInstance&quot;</span><span class="p">,</span>
+        <span class="s">&quot;random_instance&quot;</span><span class="p">:</span><span class="s">&quot;RandomNumberTableInstance&quot;</span><span class="p">,</span>
         <span class="s">&quot;kernel_cdf&quot;</span><span class="p">:</span><span class="s">&quot;CDF&quot;</span><span class="p">,</span>
         <span class="s">&quot;kernel_cdfsamples&quot;</span><span class="p">:</span><span class="s">&quot;CDFSamples&quot;</span><span class="p">,</span>
         <span class="s">&quot;kernel_gul&quot;</span><span class="p">:</span><span class="s">&quot;GUL&quot;</span><span class="p">,</span>
-		<span class="s">&quot;kernel_pubgul&quot;</span><span class="p">:</span> <span class="s">&quot;PubGUL&quot;</span><span class="p">,</span>
-
+        <span class="s">&quot;kernel_pubgul&quot;</span><span class="p">:</span> <span class="s">&quot;PubGUL&quot;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_url</span><span class="p">,</span> <span class="n">pub_user</span><span class="p">):</span>
@@ -103,14 +107,15 @@
         <span class="c"># Each instance with have it&#39;s own data_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="SpittalBase.do_request"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_request">[docs]</a>    <span class="k">def</span> <span class="nf">do_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">in_data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">in_file_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.do_request"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.do_request">[docs]</a>    <span class="k">def</span> <span class="nf">do_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">in_data</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">in_file_dict</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Makes a post request.</span>
 
 <span class="sd">        Also automatically passes self.cookies to the post request.</span>
 <span class="sd">        This authenticates each request.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            url (str): the url to make a post request to.</span>
+<span class="sd">            url (str): the url to make a post request to. Ensureu that you</span>
+<span class="sd">                specify a schema i.e. http://, ftp:// etc...</span>
 <span class="sd">            in_data (dict): optional, used if data needs to be passed.</span>
 <span class="sd">            in_file_dict (dict): optional, passes file dict to server.</span>
 
@@ -118,6 +123,9 @@
 <span class="sd">            HttpResponse: server&#39;s response</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">url_string</span><span class="o">=</span><span class="n">url</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s">&quot;do_request request string: {string}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">string</span><span class="o">=</span><span class="n">url_string</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="n">response</span><span class="o">=</span><span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="n">url_string</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">in_data</span><span class="p">,</span>
@@ -126,7 +134,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.do_login"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_login">[docs]</a>    <span class="k">def</span> <span class="nf">do_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.do_login"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.do_login">[docs]</a>    <span class="k">def</span> <span class="nf">do_login</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">password</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Logs into Oasis Django mid-tier.</span>
 
 <span class="sd">        Also, set self.cookies to the return session ID.</span>
@@ -155,7 +163,7 @@
 
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span> <span class="s">&#39;Log in response &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.create_file_upload"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_file_upload">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
+<div class="viewcode-block" id="SpittalBase.create_file_upload"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.create_file_upload">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_upload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
                             <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a file upload object and returns the ID</span>
 
@@ -176,10 +184,13 @@
             <span class="n">upload_filename</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
         <span class="p">)</span>
-        <span class="n">up_id</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">up_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;createFileUpload respons: {resp}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">resp</span><span class="o">=</span><span class="n">up_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">))</span>
+        <span class="n">up_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">up_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">up_id</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.create_file_download"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_file_download">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
+<div class="viewcode-block" id="SpittalBase.create_file_download"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.create_file_download">[docs]</a>    <span class="k">def</span> <span class="nf">create_file_download</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">,</span>
                             <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a file download object and returns the ID</span>
 
@@ -200,10 +211,15 @@
             <span class="n">upload_filename</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span> <span class="o">+</span>
             <span class="nb">str</span><span class="p">(</span><span class="n">module_supplier_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
         <span class="p">)</span>
-        <span class="n">down_id</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">down_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
+            <span class="s">&quot;createFileDownload respons: {resp}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">resp</span><span class="o">=</span><span class="n">down_response</span><span class="o">.</span><span class="n">content</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">down_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">down_response</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;taskId&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">down_id</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.upload_file"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_absolute_filepath</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.upload_file"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.upload_file">[docs]</a>    <span class="k">def</span> <span class="nf">upload_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">local_absolute_filepath</span><span class="p">,</span> <span class="n">upload_filename</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Uploads a file to the server.</span>
 
 <span class="sd">        Uploads a local file that is renamed on the server side to</span>
@@ -230,12 +246,12 @@
         <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_request</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span>
             <span class="s">&quot;/oasis/doTaskDownloadFileHelper/&quot;</span> <span class="o">+</span>
-            <span class="n">download_id</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">download_id</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;/&quot;</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span>
 
 
-<div class="viewcode-block" id="SpittalBase.create_timestamps"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_timestamps">[docs]</a>    <span class="k">def</span> <span class="nf">create_timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.create_timestamps"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.create_timestamps">[docs]</a>    <span class="k">def</span> <span class="nf">create_timestamps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create timestamp for destination files</span>
 
 <span class="sd">        Returns:</span>
@@ -244,7 +260,7 @@
         <span class="n">str_now</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s">&quot;%Y%m</span><span class="si">%d</span><span class="s">_%H%M%S_&quot;</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">localtime</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">str_now</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.check_status"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.check_status">[docs]</a>    <span class="k">def</span> <span class="nf">check_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">config_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.check_status"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.check_status">[docs]</a>    <span class="k">def</span> <span class="nf">check_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">config_id</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the status of the respective job.</span>
 
 <span class="sd">        Args:</span>
@@ -262,7 +278,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.do_task"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.do_task">[docs]</a>    <span class="k">def</span> <span class="nf">do_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">sys_config</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.do_task"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.do_task">[docs]</a>    <span class="k">def</span> <span class="nf">do_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">sys_config</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a task on the job queue.</span>
 
 <span class="sd">        Args:</span>
@@ -282,7 +298,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">response</span>
 </div>
-<div class="viewcode-block" id="SpittalBase.create_dict"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.create_dict">[docs]</a>    <span class="k">def</span> <span class="nf">create_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">download_id</span><span class="p">,</span>
+<div class="viewcode-block" id="SpittalBase.create_dict"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.create_dict">[docs]</a>    <span class="k">def</span> <span class="nf">create_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dict_type</span><span class="p">,</span> <span class="n">upload_id</span><span class="p">,</span> <span class="n">download_id</span><span class="p">,</span>
                     <span class="n">pub_user</span><span class="p">,</span> <span class="n">module_supplier_id</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a dict with the upload and download IDs.</span>
 
@@ -309,11 +325,27 @@
         <span class="k">return</span> <span class="n">response</span>
 
 </div>
-<div class="viewcode-block" id="SpittalBase.upload_directory"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.upload_directory">[docs]</a>    <span class="k">def</span> <span class="nf">upload_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">do_timestamps</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
-                        <span class="n">module_supplier_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.upload_directory"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.upload_directory">[docs]</a>    <span class="k">def</span> <span class="nf">upload_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">do_timestamps</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">pkey</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Upload an entire directory of files.</span>
 
 <span class="sd">        In order to achieve this I created a file naming convention.</span>
+<span class="sd">        This naming convention splits the name into three parts separated</span>
+<span class="sd">        by underscores and appended with a .csv extension:</span>
+
+<span class="sd">            1. The file&#39;s type. Either dictionary or version corresponding</span>
+<span class="sd">               to it&#39;s Oasis profile type.</span>
+<span class="sd">            2. The specific name below the type. Must be any of the below:</span>
+<span class="sd">                - areaperil</span>
+<span class="sd">                - damagebin</span>
+<span class="sd">                - event</span>
+<span class="sd">                - exposure</span>
+<span class="sd">                - hazardintensitybin</span>
+<span class="sd">                - vuln</span>
+<span class="sd">                - hazfp</span>
+<span class="sd">            3. Lastly, for now, the module supplier will be hard coded into the</span>
+<span class="sd">               name of each file. Really the main reason for this is because we</span>
+<span class="sd">               do not have a config file to specify all of this.</span>
+<span class="sd">               TODO: Create a config file to run everything automatically!</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            directory_path (str): path to the directory to upload from.</span>
@@ -330,6 +362,21 @@
         <span class="c"># For all files in directory.</span>
         <span class="k">for</span> <span class="n">pathname</span> <span class="ow">in</span> <span class="n">files_to_upload</span><span class="p">:</span>
             <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">pathname</span><span class="p">)</span>
+
+            <span class="c"># Split the &#39;.&#39;s as well cause they are file extensions.</span>
+            <span class="c"># We just want to get the first two parts of the name.</span>
+            <span class="n">splitname</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">data_name</span> <span class="o">=</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">module_supplier_id</span> <span class="o">=</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">splitname</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">,</span>\
+                <span class="s">&quot;Bad file name in folder: {filename}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">data_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
+                    <span class="p">(</span><span class="s">&quot;File type {filetype} does not have proper type format. &quot;</span>
+                    <span class="s">&quot;Are you sure you spelt it right?&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">filetype</span><span class="o">=</span><span class="n">data_name</span>
+                    <span class="p">)</span>
+
             <span class="c"># Timestamp files if nessecary.</span>
             <span class="k">if</span> <span class="n">do_timestamps</span><span class="p">:</span>
                 <span class="n">upload_filename</span> <span class="o">=</span> <span class="n">timestamp</span> <span class="o">+</span> <span class="n">filename</span>
@@ -341,6 +388,8 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
                 <span class="n">module_supplier_id</span>
             <span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">up_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span>\
+                <span class="s">&quot;Bad upload ID response: Not an integer!&quot;</span>
 
             <span class="c"># Create the file download and get ID.</span>
             <span class="n">down_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_file_download</span><span class="p">(</span>
@@ -348,16 +397,14 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">pub_user</span><span class="p">,</span>
                 <span class="n">module_supplier_id</span>
             <span class="p">)</span>
+            <span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">down_id</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span>\
+                <span class="s">&quot;Bad download ID response: Not an integer!&quot;</span>
 
             <span class="c"># Actually upload the file to the server.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">upload_file</span><span class="p">(</span>
                 <span class="n">pathname</span><span class="p">,</span>
                 <span class="n">upload_filename</span>
             <span class="p">)</span>
-
-            <span class="c"># Split the &#39;.&#39;s as well cause they are file extensions.</span>
-            <span class="n">splitname</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;.&quot;</span><span class="p">,</span> <span class="s">&quot;_&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;_&quot;</span><span class="p">)</span>
-            <span class="n">data_name</span> <span class="o">=</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s">&quot;_&quot;</span> <span class="o">+</span> <span class="n">splitname</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
             <span class="c"># Save the data for later use.</span>
             <span class="c"># Update data_dict.</span>
@@ -366,12 +413,13 @@
                 <span class="s">&#39;upload_name&#39;</span><span class="p">:</span> <span class="n">upload_filename</span><span class="p">,</span>
                 <span class="s">&#39;upload_id&#39;</span><span class="p">:</span> <span class="n">up_id</span><span class="p">,</span>
                 <span class="s">&#39;download_id&#39;</span><span class="p">:</span> <span class="n">down_id</span><span class="p">,</span>
+                <span class="s">&#39;module_supplier_id&#39;</span><span class="p">:</span> <span class="n">module_supplier_id</span><span class="p">,</span>
             <span class="p">}</span>
 
         <span class="k">print</span><span class="p">(</span><span class="s">&quot;Uploaded directory&quot;</span><span class="p">)</span>
 
     <span class="c"># TODO: Appropriately name this method.</span></div>
-<div class="viewcode-block" id="SpittalBase.load_models"><a class="viewcode-back" href="../spittalbase.html#spittalbase.SpittalBase.load_models">[docs]</a>    <span class="k">def</span> <span class="nf">load_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SpittalBase.load_models"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.load_models">[docs]</a>    <span class="k">def</span> <span class="nf">load_models</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Do tasks, load up models.</span>
 
 <span class="sd">        Adds all the tasks in the data_dict to the job queue.</span>
@@ -383,7 +431,7 @@
                 <span class="k">continue</span>
             <span class="n">task_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_task</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">type_name</span><span class="p">],</span>
-                <span class="n">type_</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+                <span class="n">type_</span><span class="p">[</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">type_name</span><span class="p">][</span><span class="s">&#39;job_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
                 <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
@@ -393,7 +441,93 @@
                 <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
             <span class="p">)</span>
 
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Loaded model&quot;</span><span class="p">)</span></div></div>
+        <span class="k">print</span><span class="p">(</span><span class="s">&quot;Loaded model&quot;</span><span class="p">)</span>
+
+
+    <span class="c"># Job related methods below.</span>
+    <span class="c"># TODO: Appropriately name this method.</span></div>
+<div class="viewcode-block" id="SpittalBase.wait_until_done"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.wait_until_done">[docs]</a>    <span class="k">def</span> <span class="nf">wait_until_done</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_id</span><span class="p">,</span> <span class="n">config_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                            <span class="n">wait_time</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">init_wait_time</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Waits until the specified job is complete.</span>
+
+<span class="sd">        This is used because some jobs depends on others.</span>
+<span class="sd">        Therfore we must wait until some jobs are completed.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            job_id (int): ID of the job to wait for.</span>
+<span class="sd">            config_id (int, optional): config that the job was created with.</span>
+<span class="sd">            wait_time (int, optional): seconds to wait between each check.</span>
+<span class="sd">            max_iters (int, optional): max iterations before raising exception.</span>
+<span class="sd">            init_wait_time (int, optional): seconds to initially wait.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">i</span><span class="o">=</span> <span class="mi">0</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">init_wait_time</span><span class="p">)</span>
+        <span class="c"># Do until job finishes or max iters is reached.</span>
+        <span class="k">while</span> <span class="n">status</span> <span class="o">==</span> <span class="bp">False</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_iters</span><span class="p">:</span>
+            <span class="n">resp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_status</span><span class="p">(</span><span class="n">job_id</span><span class="p">,</span> <span class="n">config_id</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s">&quot;Waiting for response &quot;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+            <span class="n">job_status</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)[</span><span class="s">&#39;status&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">job_status</span> <span class="o">==</span> <span class="s">&#39;done&#39;</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">&quot;Previous, job done! &quot;</span> <span class="o">+</span> <span class="n">resp</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+                <span class="n">status</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="c"># If the job fails stop everything and raise exception.</span>
+            <span class="k">elif</span> <span class="n">job_status</span> <span class="o">==</span> <span class="s">&quot;FAILED&quot;</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s">&quot;FATAL: Job {num} failed with a response of: {resp}&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">num</span><span class="o">=</span><span class="n">job_id</span><span class="p">,</span>
+                        <span class="n">resp</span><span class="o">=</span><span class="n">resp</span><span class="o">.</span><span class="n">content</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">wait_time</span><span class="p">)</span>
+        <span class="c"># If we hit max iterations.</span>
+        <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s">&quot;Task Load Timeout!</span><span class="se">\n</span><span class="s">Try setting a longer wait time&quot;</span>
+            <span class="p">)</span>
+        <span class="c"># TODO: Maybe report some time stats once done.</span>
+
+
+    <span class="c"># TODO: Rename to queue_all_tasks.</span></div>
+<div class="viewcode-block" id="SpittalBase.queue_task"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.queue_task">[docs]</a>    <span class="k">def</span> <span class="nf">queue_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simple add the specified task in the job queue.</span>
+
+<span class="sd">        This is simple queuing the task only adding it to the queue.</span>
+<span class="sd">        As opposed to do the job when we wait for it to complete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">task_response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_task</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">types</span><span class="p">[</span><span class="n">task_name</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">task_name</span><span class="p">][</span><span class="s">&#39;taskId&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">task_name</span><span class="p">][</span><span class="s">&#39;job_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span>
+            <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)[</span><span class="s">&#39;JobId&#39;</span><span class="p">]</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s">&#39;Queued {name} task response: &#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">task_name</span><span class="p">)</span> <span class="o">+</span>
+            <span class="n">task_response</span><span class="o">.</span><span class="n">content</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.do_job"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.do_job">[docs]</a>    <span class="k">def</span> <span class="nf">do_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task_name</span><span class="p">,</span> <span class="n">wait_time</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Wait until the job has been done on the job queue. &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">queue_task</span><span class="p">(</span><span class="n">task_name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_until_done</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_dict</span><span class="p">[</span><span class="n">task_name</span><span class="p">][</span><span class="s">&#39;job_id&#39;</span><span class="p">],</span>
+            <span class="n">wait_time</span><span class="o">=</span><span class="n">wait_time</span><span class="p">,</span>
+            <span class="n">max_iters</span><span class="o">=</span><span class="n">max_iters</span>
+        <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SpittalBase.do_jobs"><a class="viewcode-back" href="../../code_docs/spittalbase.html#spittalpond.spittalbase.SpittalBase.do_jobs">[docs]</a>    <span class="k">def</span> <span class="nf">do_jobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job_list</span><span class="p">,</span>  <span class="n">wait_time</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Do all dependant jobs in the given list. &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">task_name</span> <span class="ow">in</span> <span class="n">job_list</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">do_job</span><span class="p">(</span>
+                <span class="n">task_name</span><span class="p">,</span>
+                <span class="n">wait_time</span><span class="o">=</span><span class="n">wait_time</span><span class="p">,</span>
+                <span class="n">max_iters</span><span class="o">=</span><span class="n">max_iters</span>
+            <span class="p">)</span></div></div>
 </pre></div>
 
           </div>
@@ -403,7 +537,7 @@
         <div class="sphinxsidebarwrapper">
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
+    <form class="search" action="../../search.html" method="get">
       <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
@@ -422,18 +556,18 @@
       <h3>Navigation</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
+          <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
+          <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">spitttalpond 0.1 documentation</a> &raquo;</li>
-          <li><a href="index.html" >Module code</a> &raquo;</li> 
+        <li><a href="../../index.html">spitttalpond 0.0.2 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2014, Beckett Simmons.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.3.
     </div>
   </body>
 </html>
