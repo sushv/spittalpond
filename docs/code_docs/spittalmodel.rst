@@ -1,5 +1,5 @@
 Spittal Model
 ===============
 
-.. autoclass:: spittalmodel.SpittalModel
+.. automodule:: spittalpond.spittalmodel
     :members:
