@@ -142,13 +142,13 @@ class SpittalExposure(SpittalBase):
             self.data_dict['dict_exposure']['upload_id'],
             self.data_dict['dict_exposure']['download_id'],
             self.pub_user,
-            module_supplier_id
+            self.data_dict['dict_exposure']['module_supplier_id'],
         )
         logger.info('Create dict_exposure response: ' + creation_response.content)
 
-        self.data_dict['dict_exposure']['id'] = json.loads(
+        self.data_dict['dict_exposure']['taskId'] = json.loads(
             creation_response.content
-        )['id']
+        )['taskId']
 
         # The correlations file simply has to be uploaded.
         # create_exposure_version() will take care of the rest.
@@ -156,63 +156,63 @@ class SpittalExposure(SpittalBase):
         # For now we assume that there is only one exposure version.
         # so we do not need to loop through.
         creation_response = self.create_exposure_version(
-            self.pub_user,
-            module_supplier_id,
+            "exposure_main",
+            self.data_dict['exposures_main']['module_supplier_id'],
             self.data_dict['exposures_main']['upload_id'],
-            self.data_dict['correlations_main']['upload_id']
+            self.data_dict['correlations_main']['upload_id'],
         )
         logger.info('Create exposure_verion response: ' + creation_response.content)
 
-        self.data_dict['exposures_main']['id'] = json.loads(
+        self.data_dict['exposures_main']['taskId'] = json.loads(
             creation_response.content
-        )['id']
+        )['taskId']
 
         # Create the exposure instance.
         self.data_dict['exposures_instance'] = {}
         creation_response = self.create_exposure_instance(
             self.pub_user,
-            self.data_dict['exposures_main']['id'],
-            self.data_dict['dict_exposure']['id'],
-            model_data_dict['dict_areaperil']['id'],
-            model_data_dict['dict_vuln']['id']
+            self.data_dict['exposures_main']['taskId'],
+            self.data_dict['dict_exposure']['taskId'],
+            model_data_dict['dict_areaperil']['taskId'],
+            model_data_dict['dict_vuln']['taskId']
         )
         logger.info('Create exposure_instance response: ' + creation_response.content)
 
-        self.data_dict['exposures_instance']['id'] = json.loads(
+        self.data_dict['exposures_instance']['taskId'] = json.loads(
             creation_response.content
-        )['id']
+        )['taskId']
 
         # Create the hazfp instance.
         self.data_dict['hazfp_instance'] = {}
         creation_response = self.create_hazfp_instance(
             self.pub_user,
-            model_data_dict['version_hazfp']['id'],
-            model_data_dict['dict_event']['id'],
-            model_data_dict['dict_areaperil']['id'],
-            model_data_dict['dict_hazardintensitybin']['id'],
+            model_data_dict['version_hazfp']['taskId'],
+            model_data_dict['dict_event']['taskId'],
+            model_data_dict['dict_areaperil']['taskId'],
+            model_data_dict['dict_hazardintensitybin']['taskId'],
             "ModelKey"
         )
         logger.info('Create hazfp_verion response: ' + creation_response.content)
 
-        self.data_dict['hazfp_instance']['id'] = json.loads(
+        self.data_dict['hazfp_instance']['taskId'] = json.loads(
             creation_response.content
-        )['id']
+        )['taskId']
 
         # Create vuln instance.
         self.data_dict['vuln_instance'] = {}
         creation_response = self.create_vuln_instance(
             self.pub_user,
-            model_data_dict['version_vuln']['id'],
-            model_data_dict['dict_vuln']['id'],
-            model_data_dict['dict_hazardintensitybin']['id'],
-            model_data_dict['dict_damagebin']['id'],
+            model_data_dict['version_vuln']['taskId'],
+            model_data_dict['dict_vuln']['taskId'],
+            model_data_dict['dict_hazardintensitybin']['taskId'],
+            model_data_dict['dict_damagebin']['taskId'],
             "ModelKey"
         )
         logger.info('Create vuln_instance response: ' + creation_response.content)
 
-        self.data_dict['vuln_instance']['id'] = json.loads(
+        self.data_dict['vuln_instance']['taskId'] = json.loads(
             creation_response.content
-        )['id']
+        )['taskId']
         print("Finished creating exposure structures.")
 
     def create_benchmark(self, name="Benchmark", chunk_size=10,
@@ -232,9 +232,9 @@ class SpittalExposure(SpittalBase):
             self.base_url +
             "/oasis/createBenchmark/" +
             name + "/" +
-            str(self.data_dict['hazfp_instance']['id']) + "/" +
-            str(self.data_dict['exposures_instance']['id']) + "/" +
-            str(self.data_dict['vuln_instance']['id']) + "/" +
+            str(self.data_dict['hazfp_instance']['taskId']) + "/" +
+            str(self.data_dict['exposures_instance']['taskId']) + "/" +
+            str(self.data_dict['vuln_instance']['taskId']) + "/" +
             str(chunk_size) + "/" +
             str(min_chunk) + "/" +
             str(max_chunk) + "/"
