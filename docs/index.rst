@@ -9,16 +9,16 @@ Welcome to spitttalpond's documentation!
 .. automodule:: spittalpond
     :members:
 
+
+~~~~
+
 Table of Contents:
 
 .. toctree::
     :maxdepth: 2
 
-    spittalpond.rst
-    spittalbase.rst
-    spittalmodel.rst
-    spittalexposure.rst
-    spittalrun.rst
+    examples/index.rst
+    code_docs/index.rst
 
 Indices and tables
 ==================
