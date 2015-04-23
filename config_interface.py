@@ -191,7 +191,7 @@ def runner(config_file):
         spit.run.create_gul_data(
             config['gul']['name'],
             spit.exposure.data_dict['kernel_benchmark']['taskId'],
-            spit.exposure.data_dict['version_exposure']['taskId'],
+            spit.exposure.data_dict['instance_exposure']['taskId'],
         )
 
 
