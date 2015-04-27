@@ -14,38 +14,70 @@ user = "root"
 password = "password"
 
 [model]
-name = "My test model"
+name = "Mytestmodel"
 do_timestamps = true
-key = "Model key"
+key = "Modelkey"
 
 # Optionally, set a default upload directory prefix.
-directory_path = "./"
+directory_path = "C:\\Users\\OasisUser\\Desktop\\OasisImplementationModels-master\\examples\\output"
 
   [model.dict.areaperil]
-  filename = "MyAreaPerilDict_Oasis.csv"
+  filename = "dict_areaperil.csv"
   module_supplier_id = 3
 
   [model.dict.event]
-  filename = "lkj.csv"
+  filename = "dict_event.csv"
+  module_supplier_id = 3
+
+  [model.dict.vuln]
+  filename = "dict_vuln.csv"
+  module_supplier_id = 3
+  
+  [model.dict.hazardintensitybin]
+  filename = "dict_hazardintensitybin.csv"
+  module_supplier_id = 3
+  
+  [model.version.hazfp]
+  filename = "version_hazfp.csv"
+  module_supplier_id = 3
+
+  [model.version.vuln]
+  filename = "version_vuln.csv"
+  module_supplier_id = 3  
+  
+  [model.dict.damagebin]
+  filename = "dict_damagebin.csv"
   module_supplier_id = 3
 
 [exposure]
-name = "My test exposure"
+name = "Mytestexposure"
 do_timestamps = true
 
 # Optionally, set a default upload directory prefix.
-directory_path = "./"
+directory_path = "C:\\Users\\OasisUser\\Desktop\\OasisImplementationModels-master\\examples\\output"
 
   [exposure.dict.exposure]
-  filename = "MyExposureDict.csv"
-  module_supplier_id = 2
-
+  filename = "dict_exposure.csv"
+  module_supplier_id = 3
+  
   [exposure.version.exposure]
-  filepath = "MyExposureVersion.csv"
-  module_supplier_id = 2
+  filename = "version_exposure.csv"
+  module_supplier_id = 3
+  
+  [exposure.version.correlation]
+  filename = "MyCorrelations_OASIS.csv"
+  module_supplier_id = 3
 
 [benchmark]
-name = "my benchmark"
+name = "mybenchmark"
 chunk_size = 10
 min_chunk = 3
 max_chunk = 10
+
+[gul]
+name = "mygul"
+
+[pubgul]
+name = "mypubgul123"
+filename = "Pub_GUL_file_Oasis123.csv"
+module_supplier_id = 3

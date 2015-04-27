@@ -88,8 +88,18 @@ def verify_config(config):
     if 'gul' in config.keys():
         prefix = "FATAL:"
         suffix = "not specified in the gul section!"
-        if 'name' not in config['benchmark'].keys():
+        if 'name' not in config['gul'].keys():
             raise Exception(quick_msg('name'))
+
+    if 'pubgul' in config.keys():
+        prefix = "FATAL:"
+        suffix = "not specified in the pubgul section!"
+        if 'name' not in config['pubgul'].keys():
+            raise Exception(quick_msg('name'))
+        if 'filename' not in config['pubgul'].keys():
+            raise  Exception (quick_msg('filename'))
+        if 'module_supplier_id' not in config['pubgul'].keys():
+            raise Exception (quick_msg('module_supplier_id'))
 
     return True
 
@@ -153,6 +163,7 @@ def run_exposure(spittal_instance, config):
 
 
 def runner(config_file):
+ try:
     """ Parse config file and makes the appropriate Oasis API call as needed."""
 
     # Load the config file into a toml object.
@@ -194,8 +205,20 @@ def runner(config_file):
             spit.exposure.data_dict['instance_exposure']['taskId'],
         )
 
-
+    if 'pubgul' in config.keys():
+        # TODO: We shouldn't have to log in twice. Instead share cookies.
+        #spit.run.do_login(config['login']['password'])
+        #print spit.exposure.data_dict
+        spit.run.get_gul_data(
+            config['pubgul']['name'],
+            config['pubgul']['filename'],
+            config['pubgul']['module_supplier_id']
+            #spit.exposure.data_dict['kernel_pubgul']['taskId'],
+            #spit.exposure.data_dict['kernel_pubgul']['download_id_2'],
+        )
+ except Exception as e:
     return spit
+ return spit
 
 if __name__ == "__main__":
     # Grab the first argument passed. This is the file name.

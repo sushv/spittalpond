@@ -86,6 +86,8 @@ class SpittalRun(SpittalBase):
         Returns:
             HttpResponse: server's response.
         """
+        print 'url used is ' +  self.base_url +  "/oasis/createPubGUL/" + name + "/" +str(gul_id) + "/" +str(download_file_id) + "/"
+
         response = self.do_request(
             self.base_url +
             "/oasis/createPubGUL/" +
@@ -93,6 +95,7 @@ class SpittalRun(SpittalBase):
             str(gul_id) + "/" +
             str(download_file_id) + "/"
         )
+        print response.content
         return response
 
     def update_file_download(self, id, name, module_supplier_id, filename):
@@ -109,6 +112,7 @@ class SpittalRun(SpittalBase):
         Returns:
             HttpResponse: server's response.
         """
+        print self.base_url + "/oasis/updateFileDownload/" +str(id) + "/" +name + "/" + str(module_supplier_id) + "/" + filename + "/"
         response = self.do_request(
             self.base_url +
             "/oasis/updateFileDownload/" +
@@ -117,6 +121,7 @@ class SpittalRun(SpittalBase):
             str(module_supplier_id) + "/" +
             filename + "/"
         )
+        print response
         return response
 
 
@@ -282,6 +287,8 @@ class SpittalRun(SpittalBase):
             self.pub_user,
             module_supplier_id
         )
+        print 'download_id ' + str(download_id)
+
         logger.info(
             'Create kernel GUL file download response, ' + str(download_id)
         )
@@ -298,6 +305,8 @@ class SpittalRun(SpittalBase):
         self.data_dict['kernel_pubgul']['taskId'] = json.loads(
             resp.content
         )['taskId']
+
+        print self.data_dict
 
         # Update the file download.
         self.update_file_download(

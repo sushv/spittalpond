@@ -17,7 +17,7 @@ class SpittalBase():
     # TODO: Maybe have individual type definition for each sub class?
     # Each subclass only really needs to know about itself.
     types = {
-        """ This dictionary defines Oasis "types" that we use internally.
+        """This dictionary defines Oasis "types" that we use internally.
 
         This creates a standard that is both easier to type and is not
         dependant on the Oasis API. Mainly these types are used as keys in the
@@ -46,7 +46,7 @@ class SpittalBase():
         "kernel_cdf": "CDF",
         "kernel_cdfsamples": "CDFSamples",
         "kernel_gul": "GUL",
-        "kernel_pubgul": "PubGUL",
+        "kernel_pubgul": "PubGUL"
     }
 
     def __init__(self, base_url, pub_user):
@@ -246,6 +246,7 @@ class SpittalBase():
             HttpResponse: server's response.
 
         """
+        print self.base_url + "/oasis/doTask" + task_type + "/" +str(sys_config) + "/" +str(upload_id) + "/"
         response = self.do_request(
             self.base_url +
             "/oasis/doTask" + task_type + "/" +
