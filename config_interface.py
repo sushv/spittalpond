@@ -88,8 +88,18 @@ def verify_config(config):
     if 'gul' in config.keys():
         prefix = "FATAL:"
         suffix = "not specified in the gul section!"
-        if 'name' not in config['benchmark'].keys():
+        if 'name' not in config['gul'].keys():
             raise Exception(quick_msg('name'))
+
+    if 'pubgul' in config.keys():
+        prefix = "FATAL:"
+        suffix = "not specified in the pubgul section!"
+        if 'name' not in config['pubgul'].keys():
+            raise Exception(quick_msg('name'))
+        if 'filename' not in config['pubgul'].keys():
+            raise Exception(quick_msg('filename'))
+        if 'module_supplier_id' not in config['pubgul'].keys():
+            raise Exception(quick_msg('module_supplier_id'))
 
     return True
 
@@ -133,7 +143,7 @@ def run_model(spittal_instance, config):
     spit = spittal_instance
     prepare_files_in_section(spit.model, config['model'])
     spit.model.create_model_structures()
-    spit.model.load_models()
+    spit.model.model_do_jobs()
 
 
 def run_exposure(spittal_instance, config):
@@ -149,7 +159,7 @@ def run_exposure(spittal_instance, config):
     spit = spittal_instance
     prepare_files_in_section(spit.exposure, config['exposure'])
     spit.exposure.create_exposure_structure(spit.model.data_dict)
-    spit.exposure.load_models()
+    spit.exposure.exposure_do_jobs()
 
 
 def runner(config_file):
@@ -194,7 +204,15 @@ def runner(config_file):
             spit.exposure.data_dict['instance_exposure']['taskId'],
         )
 
-
+    if 'pubgul' in config.keys():
+        # TODO: We shouldn't have to log in twice. Instead share cookies.
+        spit.run.do_login(config['login']['password'])
+        spit.run.get_gul_data(
+            config['pubgul']['name'],
+            config['pubgul']['filename'],
+            config['pubgul']['module_supplier_id']
+        )
+    log.info("Finished Creating Pub Gul Data.")
     return spit
 
 if __name__ == "__main__":

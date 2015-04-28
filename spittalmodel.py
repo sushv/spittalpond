@@ -120,3 +120,16 @@ class SpittalModel(SpittalBase):
             model_name -- The name that the model was uploaded with.
         """
         pass
+
+    def model_do_jobs(self):
+        self.do_jobs(
+            [
+                'dict_areaperil',
+                'dict_event',
+                'dict_vuln',
+                'dict_damagebin',
+                'dict_hazardintensitybin',
+                'version_hazfp',
+                'version_vuln'
+            ]
+        )

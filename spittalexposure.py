@@ -258,3 +258,14 @@ class SpittalExposure(SpittalBase):
         self.do_job('kernel_benchmark')
 
         print "Finished benchmark creation."
+
+    def exposure_do_jobs(self):
+        self.do_jobs(
+            [
+                'dict_exposure',
+                'version_exposure',
+                'instance_hazfp',
+                'instance_vuln',
+                'instance_exposure'
+            ]
+        )
