@@ -64,9 +64,6 @@ class SpittalModel(SpittalBase):
         for type_name, type_ in self.data_dict.iteritems():
             splitname = type_name.replace(".", "_").split("_")
 
-            # FIXME: Really bad hack to include exposures_main
-            # Need to find my naming conventions.
-            bad_exposures_hack = splitname[0] == 'exposures'
             # For dictionary types.
             if splitname[0] == 'dict':
                 creation_response = self.create_dict(
@@ -82,7 +79,7 @@ class SpittalModel(SpittalBase):
                 )
 
             # For version types.
-            elif splitname[0] == 'version' or bad_exposures_hack:
+            elif splitname[0] == 'version':
                 # Vuln and Haz version are handled the same.
                 if splitname[1] in ['vuln', 'hazfp']:
                     creation_response = self.create_version(
@@ -90,17 +87,18 @@ class SpittalModel(SpittalBase):
                         type_name,
                         type_['module_supplier_id'],
                         type_['upload_id'],
-                        "ModelKey", # TODO FIXME: Get rid of this hard coding.
+                        # TODO FIXME: Get rid of this hard coding.
+                        "ModelKey",
                     )
 
-                # Again, need to fix the exposure hack here too.
-                elif splitname[1] == 'main':
+                # Exposure is a special version.
+                elif splitname[1] == 'exposure':
                     creation_response = self.create_exposure_version(
                         type_name,
                         type_name,
                         type_['module_supplier_id'],
                         type_['upload_id'],
-                        self.data_dict['correlations_main']['upload_id'],
+                        self.data_dict['version_correlation']['upload_id'],
                     )
                 logger.info(
                     'Create version {version} response: '
@@ -122,3 +120,16 @@ class SpittalModel(SpittalBase):
             model_name -- The name that the model was uploaded with.
         """
         pass
+
+    def model_do_jobs(self):
+        self.do_jobs(
+            [
+                'dict_areaperil',
+                'dict_event',
+                'dict_vuln',
+                'dict_damagebin',
+                'dict_hazardintensitybin',
+                'version_hazfp',
+                'version_vuln'
+            ]
+        )

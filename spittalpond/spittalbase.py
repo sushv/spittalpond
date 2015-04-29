@@ -10,37 +10,42 @@ logger = logging.getLogger('spittalpond')
 class SpittalBase():
     """ A base class that contains generic spittal functions
 
-    Classes such as SpittalModel and SpittalExposures will import this one.
+    Classes such as SpittalModel and SpittalExposure will import this one.
     """
 
 
-    # TODO: Maybe have individual type for each sub class?
+    # TODO: Maybe have individual type definition for each sub class?
     # Each subclass only really needs to know about itself.
-    # TODO: fix the naming of instance here.
-    # The instance suffix shoudl come first.
-    # Also, Should be version_exposure _not_ exposure_main.
-    # And correlations main it's looking pretty.
     types = {
+        """ This dictionary defines Oasis "types" that we use internally.
+
+        This creates a standard that is both easier to type and is not
+        dependant on the Oasis API. Mainly these types are used as keys in the
+        data_dict, but also the values should be used for creating URL API
+        call strings.
+        """
+
         # correlations is special, it's just a file, that's all!
-        "correlations_main":None,
-        "dict_areaperil":"AreaPerilDict",
-        "dict_damagebin":"DamageBinDict",
-        "dict_event":"EventDict",
-        "dict_exposure":"ExposureDict",
-        "dict_hazardintensitybin":"HazardIntensityBinDict",
-        "dict_vuln":"VulnDict",
-        "dict_random":"RandomNumberTable",
-        "exposures_instance":"ExposureInstance",
-        "exposures_main":"ExposureVersion",
-        "version_hazfp":"HazFPVersion",
-        "version_vuln":"VulnVersion",
+        "version_correlation": None,
+        "dict_areaperil": "AreaPerilDict",
+        "dict_damagebin": "DamageBinDict",
+        "dict_event": "EventDict",
+        "dict_exposure": "ExposureDict",
+        "dict_hazardintensitybin": "HazardIntensityBinDict",
+        "dict_vuln": "VulnDict",
+        "dict_random": "RandomNumberTable",
+        "version_exposure": "ExposureVersion",
+        "version_hazfp": "HazFPVersion",
+        "version_vuln": "VulnVersion",
         "version_random": "RandomNumberTableVersion",
-        "vuln_instance":"VulnInstance",
-        "hazfp_instance":"HazFPInstance",
-        "random_instance":"RandomNumberTableInstance",
-        "kernel_cdf":"CDF",
-        "kernel_cdfsamples":"CDFSamples",
-        "kernel_gul":"GUL",
+        "instance_exposure": "ExposureInstance",
+        "instance_vuln": "VulnInstance",
+        "instance_hazfp": "HazFPInstance",
+        "instance_random": "RandomNumberTableInstance",
+        "kernel_benchmark": "Benchmark",
+        "kernel_cdf": "CDF",
+        "kernel_cdfsamples": "CDFSamples",
+        "kernel_gul": "GUL",
         "kernel_pubgul": "PubGUL",
     }
 
@@ -275,7 +280,7 @@ class SpittalBase():
         )
         return response
 
-
+    # TODO: Phase out this method. we should use config ui instead.
     def upload_directory(self, directory_path, do_timestamps=True, pkey=1):
         """ Upload an entire directory of files.
 
@@ -369,6 +374,62 @@ class SpittalBase():
 
         print("Uploaded directory")
 
+    def prepare_file(self, data_name, pathname, module_supplier_id,
+                     do_timestamps=True):
+        """ Combines a few webservices for upload a file.
+
+        "Prepare" is a term genrally meaning:
+            - Creating the file upload and download id's.
+            - And then actually uploading the file.
+
+        Args:
+            data_name (str): name from self.types dictionary.
+            pathname (str): path to file to prepare.
+            module_supplier_id (int): overall module supplier for uploading.
+            do_timestamps (bool): whether to prepend timestamps on upload.
+        """
+
+        filename = os.path.basename(pathname)
+        timestamp = self.create_timestamps()
+        # Timestamp files if nessecary.
+        if do_timestamps:
+            upload_filename = timestamp + filename
+
+        # Create the file upload.
+        up_id = self.create_file_upload(
+            upload_filename,
+            self.pub_user,
+            module_supplier_id
+        )
+        assert type(up_id) == int,\
+            "Bad upload ID response: Not an integer!"
+
+        # Create the file download.
+        down_id = self.create_file_download(
+            upload_filename,
+            self.pub_user,
+            module_supplier_id
+        )
+        assert type(down_id) == int,\
+            "Bad download ID response: Not an integer!"
+
+        # Actually upload the file to the server.
+        self.upload_file(
+            pathname,
+            upload_filename
+        )
+
+        # Save the data for later use.
+        # Update data_dict.
+        self.data_dict[data_name] = {
+            'filepath': pathname,
+            'upload_name': upload_filename,
+            'upload_id': up_id,
+            'download_id': down_id,
+            'module_supplier_id': module_supplier_id,
+        }
+
+
     # TODO: Appropriately name this method.
     def load_models(self):
         """ Do tasks, load up models.
@@ -378,7 +439,7 @@ class SpittalBase():
         logger.info('Loading {name} data'.format(name=self.__class__.__name__))
         for type_name, type_ in self.data_dict.iteritems():
             # An exclude for correlations. Isn't created nor has an ID.
-            if type_name == "correlations_main":
+            if type_name == "version_correlation":
                 continue
             task_response = self.do_task(
                 self.types[type_name],

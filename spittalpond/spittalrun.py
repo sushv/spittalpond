@@ -187,7 +187,7 @@ class SpittalRun(SpittalBase):
         logger.info("Auto-creating random numbers.")
 
         # Check if we need to create the data_dict keys.
-        for key in ["version_random", "random_instance"]:
+        for key in ["version_random", "instance_random"]:
             if not key in self.data_dict:
                 self.data_dict[key] = {}
         # Below, 2 is the default version.
@@ -203,11 +203,11 @@ class SpittalRun(SpittalBase):
             number_of_pages,
             number_of_samples_per_page
         )
-        self.data_dict["random_instance"]["taskId"] =\
+        self.data_dict["instance_random"]["taskId"] =\
             json.loads(instance_resp.content)['taskId']
 
         # Run both of the jobs in order.
-        self.do_jobs(["version_random", "random_instance"])
+        self.do_jobs(["version_random", "instance_random"])
 
         return None
 
@@ -217,7 +217,7 @@ class SpittalRun(SpittalBase):
         Args:
             gul_name (str): the user friendly name of the gul to create
             benchmark_id (int): the id returned from create_benchmark().
-            exposure_instance_id (int): id returned from create_exposure_instance().
+            exposure_instance_id (int): id from create_exposure_instance().
 
         Returns:
             HttpResponse: server's response.
@@ -238,7 +238,7 @@ class SpittalRun(SpittalBase):
             gul_name,
             self.data_dict['kernel_cdf']['taskId'],
             10,
-            self.data_dict['random_instance']['taskId']
+            self.data_dict['instance_random']['taskId']
         )
         logger.info('Create cdf_samples response: ' + resp.content)
 

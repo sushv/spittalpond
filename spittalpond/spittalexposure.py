@@ -157,33 +157,33 @@ class SpittalExposure(SpittalBase):
         # so we do not need to loop through.
         creation_response = self.create_exposure_version(
             "exposure_main",
-            self.data_dict['exposures_main']['module_supplier_id'],
-            self.data_dict['exposures_main']['upload_id'],
-            self.data_dict['correlations_main']['upload_id'],
+            self.data_dict['version_exposure']['module_supplier_id'],
+            self.data_dict['version_exposure']['upload_id'],
+            self.data_dict['version_correlation']['upload_id'],
         )
         logger.info('Create exposure_verion response: ' + creation_response.content)
 
-        self.data_dict['exposures_main']['taskId'] = json.loads(
+        self.data_dict['version_exposure']['taskId'] = json.loads(
             creation_response.content
         )['taskId']
 
         # Create the exposure instance.
-        self.data_dict['exposures_instance'] = {}
+        self.data_dict['instance_exposure'] = {}
         creation_response = self.create_exposure_instance(
             self.pub_user,
-            self.data_dict['exposures_main']['taskId'],
+            self.data_dict['version_exposure']['taskId'],
             self.data_dict['dict_exposure']['taskId'],
             model_data_dict['dict_areaperil']['taskId'],
             model_data_dict['dict_vuln']['taskId']
         )
         logger.info('Create exposure_instance response: ' + creation_response.content)
 
-        self.data_dict['exposures_instance']['taskId'] = json.loads(
+        self.data_dict['instance_exposure']['taskId'] = json.loads(
             creation_response.content
         )['taskId']
 
         # Create the hazfp instance.
-        self.data_dict['hazfp_instance'] = {}
+        self.data_dict['instance_hazfp'] = {}
         creation_response = self.create_hazfp_instance(
             self.pub_user,
             model_data_dict['version_hazfp']['taskId'],
@@ -194,12 +194,12 @@ class SpittalExposure(SpittalBase):
         )
         logger.info('Create hazfp_verion response: ' + creation_response.content)
 
-        self.data_dict['hazfp_instance']['taskId'] = json.loads(
+        self.data_dict['instance_hazfp']['taskId'] = json.loads(
             creation_response.content
         )['taskId']
 
         # Create vuln instance.
-        self.data_dict['vuln_instance'] = {}
+        self.data_dict['instance_vuln'] = {}
         creation_response = self.create_vuln_instance(
             self.pub_user,
             model_data_dict['version_vuln']['taskId'],
@@ -208,9 +208,9 @@ class SpittalExposure(SpittalBase):
             model_data_dict['dict_damagebin']['taskId'],
             "ModelKey"
         )
-        logger.info('Create vuln_instance response: ' + creation_response.content)
+        logger.info('Create instance_vuln response: ' + creation_response.content)
 
-        self.data_dict['vuln_instance']['taskId'] = json.loads(
+        self.data_dict['instance_vuln']['taskId'] = json.loads(
             creation_response.content
         )['taskId']
         print("Finished creating exposure structures.")
@@ -232,11 +232,40 @@ class SpittalExposure(SpittalBase):
             self.base_url +
             "/oasis/createBenchmark/" +
             name + "/" +
-            str(self.data_dict['hazfp_instance']['taskId']) + "/" +
-            str(self.data_dict['exposures_instance']['taskId']) + "/" +
-            str(self.data_dict['vuln_instance']['taskId']) + "/" +
+            str(self.data_dict['instance_hazfp']['taskId']) + "/" +
+            str(self.data_dict['instance_exposure']['taskId']) + "/" +
+            str(self.data_dict['instance_vuln']['taskId']) + "/" +
             str(chunk_size) + "/" +
             str(min_chunk) + "/" +
             str(max_chunk) + "/"
         )
         return response
+
+    def create_benchmark_structure(self, name):
+        """ Adds the benchmark chunks to the backend database. """
+
+        create_resp = self.create_benchmark(name=name)
+        logger.debug(
+            'Create benchmark response: ' + create_resp.content
+        )
+
+        if 'kernel_benchmark' not in self.data_dict.keys():
+            self.data_dict['kernel_benchmark'] = {}
+        self.data_dict['kernel_benchmark']['taskId'] = json.loads(
+            create_resp.content
+        )['taskId']
+
+        self.do_job('kernel_benchmark')
+
+        print "Finished benchmark creation."
+
+    def exposure_do_jobs(self):
+        self.do_jobs(
+            [
+                'dict_exposure',
+                'version_exposure',
+                'instance_hazfp',
+                'instance_vuln',
+                'instance_exposure'
+            ]
+        )
