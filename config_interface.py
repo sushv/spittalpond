@@ -1,9 +1,11 @@
 import argparse
 import os
+import logging
 
 import pytoml
 import spittalpond
 
+logger = logging.getLogger('spittalpond')
 
 def verify_config(config):
     """ Verifies the config dictionary-like object for correctness.
@@ -50,7 +52,7 @@ def verify_config(config):
         if 'directory_path' not in section.keys():
             raise Exception(quick_msg('directory_path'))
         categories = {k: v for k, v in section.iteritems()\
-                    if k in ['dict', 'version']}
+                      if k in ['dict', 'version']}
         for cat_name, category in categories.iteritems():
             for name, value in category.iteritems():
                 fuller_name = cat_name + "." + name
@@ -103,6 +105,7 @@ def verify_config(config):
 
     return True
 
+
 def prepare_files_in_section(spittal_sub_instance, section):
     """ Prepares all specified files in a section.
 
@@ -133,7 +136,8 @@ def prepare_files_in_section(spittal_sub_instance, section):
 def run_model(spittal_instance, config):
     """ Run model section of the config.
 
-    This method assumes that the config is already validated and we are logged in.
+    This method assumes that the config is already validated and we are logged
+    in.
 
     Args:
         spittal_instance (SpittalPond): SpittalPond object to run with.
@@ -149,7 +153,8 @@ def run_model(spittal_instance, config):
 def run_exposure(spittal_instance, config):
     """ Run exposure section of the config.
 
-    This method assumes that the config is already validated and we are logged in.
+    This method assumes that the config is already validated and we are logged
+    in.
 
     Args:
         spittal_instance (SpittalPond): SpittalPond object to run with.
@@ -212,8 +217,8 @@ def runner(config_file):
             config['pubgul']['filename'],
             config['pubgul']['module_supplier_id']
         )
-    log.info("Finished Creating Pub Gul Data.")
     return spit
+
 
 if __name__ == "__main__":
     # Grab the first argument passed. This is the file name.
@@ -230,3 +235,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     spittalpond_instance = runner(args.config_file)
+    logger.info("Succesfully finished running the config interface!")
