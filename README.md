@@ -21,15 +21,31 @@ $ cd path/to/spittalpond
 $ python setup.py install
 ```
 
+Usage
+-----
+
+Spittalpond can be quickly run by using the config interface. Note that you will
+have modify the example.toml (of create your own) TOML configuration file to
+point to your specific Oasis .csv files and you Oasis server. Then simply use
+that config file as seen here:
+
+```sh
+$ cd path/to/spittalpond/
+$ python ./spittalpond/config_interface.py ../examples/example.toml
+```
+
+Documentation on the config interface can be found [here].
+
 Dependencies
 ------------
 
-Core Spittalpond depends on the Python [Requests] package. You can quickly
-`pip` install this as necessary (if it is not automatically resolved with the
-main setup command).
+Core Spittalpond depends on the Python [Requests], and [pytoml] packages.
+`pip install` this as necessary (if these dependencies are not automatically
+resolved with the main setup command).
 
 Also, of course, you will need to have [IPython] installed (as well as the
-notebooks part of it) in order to view the IPython notebook examples.
+notebooks part of it) if you intend to view and run the IPython notebook
+examples.
 
 Contribute
 ----------
@@ -43,6 +59,8 @@ Documentation
 Documentation is available at
 <http://beckettsimmons.github.io/spittalpond/docs/>
 
+[here]: <http://beckettsimmons.github.io/spittalpond/docs/usage/config_interface.html>
 [Requests]: <http://docs.python-requests.org/en/latest/>
+[pytoml]: <https://github.com/avakar/pytoml>
 [IPython]: <http://ipython.org/>
 [CONTRIBUTING.md]: <./CONTRIBUTING.md>

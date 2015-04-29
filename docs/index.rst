@@ -17,6 +17,7 @@ Table of Contents:
 .. toctree::
     :maxdepth: 2
 
+    usage/index.rst
     examples/index.rst
     code_docs/index.rst
 
