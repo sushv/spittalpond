@@ -1,0 +1,31 @@
+From 201a899c7f0a5074ca82b3aa406e174a4301bdd2 Mon Sep 17 00:00:00 2001
+From: Beckett Simmons <beckettsimmons@hotmail.com>
+Date: Mon, 11 Aug 2014 10:25:20 -0300
+Subject: [PATCH] Small change for uploading files.
+
+Previously, when passing a file to the API call */oasis/doTaskUplaodFileHelper* using the python requests library, with an incatation similar to::
+
+    requests.post(url, files={"upload_file_name": upload_file_object})
+
+The doTaskUploadFileHelper function would use the upload_file_object's name, as opposed to the passed "upload_file_name".
+This commit fixes that.
+---
+ oasis/app/views.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/oasis/app/views.py b/oasis/app/views.py
+index becf9ff..ced1e87 100644
+--- a/oasis/app/views.py
++++ b/oasis/app/views.py
+@@ -9343,7 +9343,7 @@ def doTaskUploadFileHelper(request):
+         # print '------------------------------------------'
+         # print multipart_obj
+         # print '------------------------------------------'
+-        fullPath ="{0}/{1}".format(uploads_dir, multipart_obj) 
++        fullPath ="{0}/{1}".format(uploads_dir, multipart_name)
+         file( fullPath, "wb").write( multipart_obj.read() )
+         os.chmod( fullPath , 777)
+         dos2unixcmd = 'dos2unix -q ' + fullPath
+-- 
+2.1.4
+

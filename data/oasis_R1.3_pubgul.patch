@@ -1,0 +1,34 @@
+From 8ca069816af6f50ae40de07f3e6072cf7ff5e1ad Mon Sep 17 00:00:00 2001
+From: Beckett Simmons <beckettsimmons@hotmail.com>
+Date: Mon, 27 Apr 2015 17:01:54 +0100
+Subject: [PATCH] Fixed Pub Gul self-referencing bug.
+
+---
+ oasis/app/scripts/Kernel/PubGUL.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/oasis/app/scripts/Kernel/PubGUL.py b/oasis/app/scripts/Kernel/PubGUL.py
+index aa3c08b..4692f2e 100755
+--- a/oasis/app/scripts/Kernel/PubGUL.py
++++ b/oasis/app/scripts/Kernel/PubGUL.py
+@@ -29,7 +29,7 @@ def doTask( jobId, sysConfigId, taskId, module_dir ):
+     if not clustering:
+         for myChunkId in range ( i.myGUL.myCDFSamples.myCDF.myBenchmark.minChunk, i.myGUL.myCDFSamples.myCDF.myBenchmark.maxChunk+1 ):
+             mydict =      {
+-			                'TTTT' : 'GUL_{0}_CHUNK_{1}_GUL_SAMPLES'.format(taskId, myChunkId), \
++			                'TTTT' : 'GUL_{0}_CHUNK_{1}_GUL_SAMPLES'.format(i.myGUL.id, myChunkId), \
+ 			                'PPPP' :  "{0}{1}".format(DBTableNames.PubGul, taskId) }
+             prepareSQL( sysConfigId, module_dir + 'PubGULDoTask.sql', sfn, mydict )
+     else:
+@@ -44,7 +44,7 @@ def doTask( jobId, sysConfigId, taskId, module_dir ):
+                         username = sc.backEndDatabaseServerCredentials.split(';')[0].split('=')[1].encode('ascii', 'ignore')
+                         password = sc.backEndDatabaseServerCredentials.split(';')[1].split('=')[1].encode('ascii', 'ignore')
+                         mydict =      {
+-			                'TTTT' :  'GUL_{0}_CHUNK_{1}_GUL_SAMPLES'.format(taskId, myChunkId),
++			                'TTTT' :  'GUL_{0}_CHUNK_{1}_GUL_SAMPLES'.format(i.myGUL.id, myChunkId),
+ 			                'PPPP' :  "{0}{1}".format(DBTableNames.PubGul, taskId),
+ 			                'SSSS' :  '{0}'.format(clusterIP),
+ 						    'KKKK' :  '{0}'.format(sc.kernelDB),
+-- 
+2.1.4
+
